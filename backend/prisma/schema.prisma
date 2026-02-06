@@ -1,0 +1,221 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  password String
+  role     UserRole @default(CLIENT)
+
+  companyId Int?
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+model Company {
+  id    Int     @id @default(autoincrement())
+  name  String
+  nit   String? @unique
+  nrc   String?
+  email String?
+  phone String?
+
+  users        User[]
+  pointsOfSale PointOfSale[]
+  customers    Customer[]
+  products     Product[]
+  invoices     Invoice[]
+  issuer       Issuer?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Issuer {
+  id               Int     @id @default(autoincrement())
+  externalId       Int
+  nit              String
+  nrc              String
+  name             String
+  tradeName        String?
+  activityCode     String?
+  economicActivity String?
+  address          String?
+  phone            String?
+  email            String?
+  environment      String?
+
+  companyId Int     @unique
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  permissions Permission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  issuerId Int
+  issuer   Issuer @relation(fields: [issuerId], references: [id], onDelete: Cascade)
+
+  @@unique([name, issuerId])
+}
+
+model PointOfSale {
+  id    Int     @id @default(autoincrement())
+  code  String
+  name  String?
+  token String
+
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+
+  invoices Invoice[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, code])
+}
+
+model Customer {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  // Identification
+  nrc            String?
+  nit            String?
+  documentNumber String?
+  documentType   String?
+
+  // Contact
+  email String?
+  phone String?
+
+  // Address
+  department        String?
+  municipality      String?
+  addressComplement String?
+
+  // Economic activity
+  activityCode        String?
+  activityDescription String?
+
+  // Special type
+  isExcludedSubject Boolean @default(false)
+
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+
+  invoices Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id    Int     @id @default(autoincrement())
+  name  String
+  price Decimal @db.Decimal(10, 2)
+
+  code        String?
+  unitMeasure Int?
+  itemType    Int?
+  taxType     String?
+
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+
+  invoiceItems InvoiceItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id Int @id @default(autoincrement())
+
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+
+  customerId Int?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  pointOfSaleId Int
+  pointOfSale   PointOfSale @relation(fields: [pointOfSaleId], references: [id])
+
+  number String?
+  total  Decimal       @db.Decimal(10, 2)
+  status InvoiceStatus @default(PENDING)
+
+  items InvoiceItem[]
+  dte   DteResponse?
+
+  issuedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model InvoiceItem {
+  id Int @id @default(autoincrement())
+
+  invoiceId Int
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  description String
+  quantity    Decimal @db.Decimal(10, 2)
+  unitPrice   Decimal @db.Decimal(10, 2)
+  total       Decimal @db.Decimal(10, 2)
+
+  taxType     String
+  code        String?
+  unitMeasure Int?
+  itemType    Int?
+}
+
+model DteResponse {
+  id        Int     @id @default(autoincrement())
+  invoiceId Int     @unique
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+
+  uuid    String?
+  status  String?
+  jsonUrl String?
+
+  rawRequest  Json?
+  rawResponse Json?
+
+  createdAt DateTime @default(now())
+}
+
+enum InvoiceStatus {
+  PENDING
+  SENT
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}

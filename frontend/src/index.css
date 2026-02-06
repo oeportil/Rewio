@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@import "tailwindcss-animated";
+
+@theme {
+  /*Colores*/
+  --color-mainColor: #000;
+  --color-secondaryColor: #94a3b8;
+  --color-lessColor: #6366f1;
+  --color-vanishColor: #f8fafc;
+  --color-MaintextColor: #1e293b;
+  --color-secondaryextColor: #64748b;
+  /*Fuentes*/
+  --font-quicksand: "Quicksand", sans-serif;
+}
+
+h1 {
+  font-family: var(--font-quicksand);
+}
+
+
+* {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+
+.animate-gradient {
+  background-size: 300%;
+  -webkit-animation: animatedgradient 6s ease infinite alternate;
+  -moz-animation: animatedgradient 6s ease infinite alternate;
+  animation: animatedgradient 6s ease infinite alternate;
+}
+
+@keyframes animatedgradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
