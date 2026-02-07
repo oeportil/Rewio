@@ -1,9 +1,8 @@
 import bcrypt from "bcryptjs";
-import { PrismaClient, User } from "../generated/prisma";
+import { User } from "../generated/prisma";
 import jwt from 'jsonwebtoken';
 import { SECRET_KEY, UNEXPECTED_ERROR } from "../consts";
-
-const prisma = new PrismaClient();
+import { prisma } from "../config/client";
 
 export const login = async (email: string, password: string) => {
     //buscar usuario si no existe
@@ -22,12 +21,12 @@ export const login = async (email: string, password: string) => {
         expiresIn: '15 days',
     })
     //retornar jwt 
-    return token;
+    return { token };
 }
 
 export const saveUser = async (user: User) => {
     //verificar que el objeto tenga los siguientes campos que son necesarios dentro del objeto
-    if (!user.password || !user.email || !user.name) {
+    if (!user.password || !user.email || !user.name || !user.role) {
         throw new Error("Faltan campos obligatorios");
     }
     //buscar si ya existe un usuario con ese email
@@ -40,6 +39,8 @@ export const saveUser = async (user: User) => {
         password: hashedPassword,
         name: user.name,
         email: user.email,
+        role: user.role,
+        status: true
     }
     //guardando el usuario dentro de la base de datos
     const success = await prisma.user.create({ data: newUser });

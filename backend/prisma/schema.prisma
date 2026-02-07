@@ -15,207 +15,154 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String
-  role     UserRole @default(CLIENT)
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      userRole
+  status    Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  logicDel  Boolean  @default(false)
 
-  companyId Int?
-  company   Company? @relation(fields: [companyId], references: [id])
+  clinicsOwned Clinic[]
+  doctor       Doctor?
+  patient      Patient?
+}
+
+model Clinic {
+  id      Int     @id @default(autoincrement())
+  name    String
+  slug    String  @unique
+  phone   String
+  email   String  @unique
+  address String
+  logo    String
+  status  Boolean
+  ownerId Int
+
+  owner User @relation(fields: [ownerId], references: [id])
+
+  doctors      Doctor[]
+  patients     Patient[]
+  services     Service[]
+  appointments Appointment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-enum UserRole {
-  ADMIN
-  CLIENT
-}
+model Doctor {
+  id       Int    @id @default(autoincrement())
+  clinicId Int
+  userId   Int    @unique
+  clinic   Clinic @relation(fields: [clinicId], references: [id])
+  user     User   @relation(fields: [userId], references: [id])
 
-model Company {
-  id    Int     @id @default(autoincrement())
-  name  String
-  nit   String? @unique
-  nrc   String?
-  email String?
-  phone String?
+  specialty String
+  color     String
+  active    Boolean @default(true)
 
-  users        User[]
-  pointsOfSale PointOfSale[]
-  customers    Customer[]
-  products     Product[]
-  invoices     Invoice[]
-  issuer       Issuer?
+  schedules    DoctorSchedule[]
+  appointments Appointment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([clinicId, userId])
 }
 
-model Issuer {
-  id               Int     @id @default(autoincrement())
-  externalId       Int
-  nit              String
-  nrc              String
-  name             String
-  tradeName        String?
-  activityCode     String?
-  economicActivity String?
-  address          String?
-  phone            String?
-  email            String?
-  environment      String?
+model Patient {
+  id       Int @id @default(autoincrement())
+  clinicId Int
+  userId   Int @unique
 
-  companyId Int     @unique
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  phone     String?
+  birthdate DateTime?
+  notes     String?
 
-  permissions Permission[]
+  clinic Clinic @relation(fields: [clinicId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([clinicId, userId])
 }
 
-model Permission {
-  id   Int    @id @default(autoincrement())
-  name String
-
-  issuerId Int
-  issuer   Issuer @relation(fields: [issuerId], references: [id], onDelete: Cascade)
-
-  @@unique([name, issuerId])
+model Service {
+  id           Int           @id @default(autoincrement())
+  clinicId     Int
+  name         String
+  duration     Int
+  price        Float
+  color        String?
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  clinic       Clinic        @relation(fields: [clinicId], references: [id])
+  appointments Appointment[]
 }
 
-model PointOfSale {
-  id    Int     @id @default(autoincrement())
-  code  String
-  name  String?
-  token String
+model DoctorSchedule {
+  id        Int    @id @default(autoincrement())
+  doctorId  Int
+  weekday   Int // 0-6
+  startTime String
+  endTime   String
 
-  companyId Int
-  company   Company @relation(fields: [companyId], references: [id])
+  doctor Doctor @relation(fields: [doctorId], references: [id])
 
-  invoices Invoice[]
-
-  createdAt DateTime @default(now())
-
-  @@unique([companyId, code])
+  @@unique([doctorId, weekday, startTime, endTime])
 }
 
-model Customer {
-  id   Int    @id @default(autoincrement())
-  name String
-
-  // Identification
-  nrc            String?
-  nit            String?
-  documentNumber String?
-  documentType   String?
-
-  // Contact
-  email String?
-  phone String?
-
-  // Address
-  department        String?
-  municipality      String?
-  addressComplement String?
-
-  // Economic activity
-  activityCode        String?
-  activityDescription String?
-
-  // Special type
-  isExcludedSubject Boolean @default(false)
-
-  companyId Int
-  company   Company @relation(fields: [companyId], references: [id])
-
-  invoices Invoice[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Product {
-  id    Int     @id @default(autoincrement())
-  name  String
-  price Decimal @db.Decimal(10, 2)
-
-  code        String?
-  unitMeasure Int?
-  itemType    Int?
-  taxType     String?
-
-  companyId Int
-  company   Company @relation(fields: [companyId], references: [id])
-
-  invoiceItems InvoiceItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Invoice {
+model Appointment {
   id Int @id @default(autoincrement())
 
-  companyId Int
-  company   Company @relation(fields: [companyId], references: [id])
+  clinicId  Int
+  doctorId  Int
+  patientId Int
+  serviceId Int
 
-  customerId Int?
-  customer   Customer? @relation(fields: [customerId], references: [id])
+  date      DateTime
+  startTime String
+  endTime   String
+  status    AppointmentStatus @default(pending)
+  notes     String?
 
-  pointOfSaleId Int
-  pointOfSale   PointOfSale @relation(fields: [pointOfSaleId], references: [id])
-
-  number String?
-  total  Decimal       @db.Decimal(10, 2)
-  status InvoiceStatus @default(PENDING)
-
-  items InvoiceItem[]
-  dte   DteResponse?
-
-  issuedAt  DateTime @default(now())
-  createdAt DateTime @default(now())
-}
-
-model InvoiceItem {
-  id Int @id @default(autoincrement())
-
-  invoiceId Int
-  invoice   Invoice @relation(fields: [invoiceId], references: [id])
-
-  productId Int?
-  product   Product? @relation(fields: [productId], references: [id])
-
-  description String
-  quantity    Decimal @db.Decimal(10, 2)
-  unitPrice   Decimal @db.Decimal(10, 2)
-  total       Decimal @db.Decimal(10, 2)
-
-  taxType     String
-  code        String?
-  unitMeasure Int?
-  itemType    Int?
-}
-
-model DteResponse {
-  id        Int     @id @default(autoincrement())
-  invoiceId Int     @unique
-  invoice   Invoice @relation(fields: [invoiceId], references: [id])
-
-  uuid    String?
-  status  String?
-  jsonUrl String?
-
-  rawRequest  Json?
-  rawResponse Json?
+  clinic  Clinic  @relation(fields: [clinicId], references: [id])
+  doctor  Doctor  @relation(fields: [doctorId], references: [id])
+  patient Patient @relation(fields: [patientId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
 
   createdAt DateTime @default(now())
+
+  @@unique([doctorId, date, startTime])
 }
 
-enum InvoiceStatus {
-  PENDING
-  SENT
-  ACCEPTED
-  REJECTED
-  CANCELLED
+enum AppointmentStatus {
+  pending
+  confirmed
+  cancelled
+  done
 }
+
+enum userRole {
+  admin
+  clinic
+  doctor
+  patient
+}
+
+// MedicalRecord model is commented, but you can implement it later on fase 2 :) niiiggaaaa
+
+// model MedicalRecord {
+//   id
+//   patientId
+//   doctorId
+//   appointmentId
+//   diagnosis
+//   notes
+//   files
+// }
