@@ -17,7 +17,7 @@ export const login = async (email: string, password: string) => {
         throw new Error("Email y/o contraseña incorrectas");
     }
     //generar jwt
-    const token = jwt.sign({ id: findUser.id, email: findUser.email, name: findUser.name, }, SECRET_KEY, {
+    const token = jwt.sign({ id: findUser.id, email: findUser.email, name: findUser.name, role: findUser.role }, SECRET_KEY, {
         expiresIn: '15 days',
     })
     //retornar jwt 

@@ -2,6 +2,8 @@ import { PrismaClient } from "../generated/prisma";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { json, Request } from "express";
+import { CustomRequest } from "../middlewares";
 
 const prisma = new PrismaClient();
 
@@ -124,3 +126,69 @@ export function saveBase64Image(base64: string, folder = "general"): string {
 
     return `/uploads/${folder}/${filename}`;
 }
+
+type PaginationParams = {
+    page?: number;
+    limit?: number;
+    search?: string;
+    searchFields?: string[];
+    filters?: Record<string, any>;
+    orderBy?: Record<string, "asc" | "desc">;
+};
+
+export async function paginateAdvanced<T extends keyof PrismaClient>(
+    model: T,
+    params: PaginationParams
+) {
+    const {
+        page = 1,
+        limit = 10,
+        search,
+        searchFields = [],
+        filters = {},
+        orderBy = { id: "desc" }
+    } = params;
+
+    const skip = (page - 1) * limit;
+
+    const where: any = { ...filters };
+
+    // 🔍 Search on dynamic fields
+    if (search && searchFields.length) {
+        where.OR = searchFields.map(field => ({
+            [field]: {
+                contains: search,
+                mode: "insensitive"
+            }
+        }));
+    }
+
+    const [data, total] = await Promise.all([
+        (prisma[model] as any).findMany({
+            where,
+            skip,
+            take: limit,
+            orderBy
+        }),
+        (prisma[model] as any).count({ where })
+    ]);
+
+    return {
+        data,
+        meta: {
+            total,
+            page,
+            limit,
+            pages: Math.ceil(total / limit)
+        }
+    };
+}
+
+export const getUserByToken = (req: Request): { id: number, email: string, name: string, role: string } => {
+    const token = (req as CustomRequest).token;
+    if (!token) throw new Error("Sesión invalidad o expirada");
+    const object = JSON.parse(token);
+    return object
+}
+
+// { id: findUser.id, email: findUser.email, name: findUser.name, role: findUser.role }

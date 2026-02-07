@@ -53,21 +53,19 @@ model Clinic {
 }
 
 model Doctor {
-  id       Int    @id @default(autoincrement())
-  clinicId Int
-  userId   Int    @unique
-  clinic   Clinic @relation(fields: [clinicId], references: [id])
-  user     User   @relation(fields: [userId], references: [id])
-
+  id        Int     @id @default(autoincrement())
+  clinicId  Int
+  userId    Int     @unique
   specialty String
   color     String
   active    Boolean @default(true)
 
   schedules    DoctorSchedule[]
   appointments Appointment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  clinic       Clinic           @relation(fields: [clinicId], references: [id])
+  user         User             @relation(fields: [userId], references: [id])
 
   @@unique([clinicId, userId])
 }
