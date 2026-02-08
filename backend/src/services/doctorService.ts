@@ -1,6 +1,6 @@
 import e, { Request } from "express";
 import { getUserByToken, paginateAdvanced } from "../utils";
-import { Doctor } from "../generated/prisma";
+import { Doctor, DoctorSchedule } from "../generated/prisma";
 import { prisma } from "../config/client";
 import { UNEXPECTED_ERROR } from "../consts";
 
@@ -53,7 +53,7 @@ export const getDoctorById = async (req: Request) => {
     const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
 
     //retornar el doctor
-    if (foundDoctor) throw new Error("Doctor no encontrado");
+    if (!foundDoctor) throw new Error("Doctor no encontrado");
     return foundDoctor;
 }
 export const updateDoctor = async (req: Request) => {
@@ -65,7 +65,7 @@ export const updateDoctor = async (req: Request) => {
     const foundDoctor = await prisma.doctor.findFirst({ where: { id: doctor.id, clinicId: +clinicId } });
 
     //actualizar el doctor
-    if (foundDoctor) throw new Error("Doctor no encontrado");
+    if (!foundDoctor) throw new Error("Doctor no encontrado");
     const objUp = {
         specialty: doctor.specialty,
         color: doctor.color,
@@ -84,7 +84,7 @@ export const changeDoctorStatus = async (req: Request) => {
     //buscar la clinica y el doctor
     if (!findMyClinic(obj.id, +clinicId)) throw new Error("La clinica no existe o no eres propietario")
     const foundDoctor = await prisma.doctor.findFirst({ where: { id: doctor.id, clinicId: +clinicId } });
-    if (foundDoctor) throw new Error("Doctor no encontrado");
+    if (!foundDoctor) throw new Error("Doctor no encontrado");
 
     //cambiar status del doctor
     const updatedDoctor = await prisma.doctor.update({
@@ -103,7 +103,7 @@ export const deleteDoctor = async (req: Request) => {
     //buscar la clinica y el doctor
     if (!findMyClinic(obj.id, +clinicId)) throw new Error("La clinica no existe o no eres propietario")
     const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
-    if (foundDoctor) throw new Error("Doctor no encontrado");
+    if (!foundDoctor) throw new Error("Doctor no encontrado");
 
     //cambiar status del doctor
     const updatedDoctor = await prisma.doctor.delete({
@@ -113,3 +113,63 @@ export const deleteDoctor = async (req: Request) => {
     //retornar Doctor Actualizado
     return updatedDoctor;
 }
+
+//#region Schedules
+export const createScheduleDoctor = async (req: Request) => {
+    const { doctorId, clinicId } = req.params
+    const { schedule }: { schedule: DoctorSchedule } = req.body
+    //buscar doctores
+    const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
+    if (!foundDoctor) throw new Error("Doctor no encontrado");
+    if (!schedule.startTime || !schedule.endTime || schedule.weekday) throw new Error("Faltan campos necesarios");
+    const newSchedule = prisma.doctorSchedule.create({ data: schedule })
+    if (!newSchedule) throw new Error(UNEXPECTED_ERROR);
+    return newSchedule;
+}
+
+export const getSchedulesByDoctorId = async (req: Request) => {
+    const { doctorId, clinicId } = req.params
+    //buscar doctores
+    const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
+    if (!foundDoctor) throw new Error("Doctor no encontrado");
+
+    const schedules = prisma.doctorSchedule.findMany({ where: { doctorId: +doctorId } })
+
+    return schedules;
+}
+
+export const replaceDoctorSchedules = async (req: Request) => {
+    const { doctorId, clinicId } = req.params
+    const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
+    if (!foundDoctor) throw new Error("Doctor no encontrado");
+    const { schedules }: { schedules: any[] } = req.body
+    return prisma.$transaction(async (tx) => {
+
+
+        await tx.doctorSchedule.deleteMany({
+            where: { doctorId: +doctorId }
+        })
+
+
+        return tx.doctorSchedule.createMany({
+            data: schedules.map(s => ({
+                doctorId: +doctorId,
+                weekday: s.weekday,
+                startTime: s.startTime,
+                endTime: s.endTime
+            }))
+        })
+    })
+}
+
+export const deleteDoctorSchedule = async (req: Request) => {
+
+    const { id } = req.params
+    //buscar doctores
+    const foundSchedule = await prisma.doctorSchedule.findFirst({ where: { id: +id } });
+    if (!foundSchedule) throw new Error("Horario no encontrado");
+    return prisma.doctorSchedule.delete({
+        where: { id: Number(id) }
+    })
+}
+

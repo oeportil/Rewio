@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import BaseController from "./baseController";
-import { changeDoctorStatus, createDoctor, deleteDoctor, getDoctorById, getMyDoctors, updateDoctor } from "../services/doctorService";
-import { Doctor } from "../generated/prisma";
+import { changeDoctorStatus, createDoctor, createScheduleDoctor, deleteDoctor, deleteDoctorSchedule, getDoctorById, getMyDoctors, getSchedulesByDoctorId, replaceDoctorSchedules, updateDoctor } from "../services/doctorService";
+import { Doctor, DoctorSchedule } from "../generated/prisma";
 
 class doctorController extends BaseController {
 
@@ -25,6 +25,22 @@ class doctorController extends BaseController {
         this.handle<Doctor>(res, () => deleteDoctor(req))
     }
 
+    //#region Schedules
+    static createSchedule(req: Request, res: Response) {
+        this.handle<DoctorSchedule>(res, () => createScheduleDoctor(req))
+    }
+
+    static getSchedulesByDoctor(req: Request, res: Response) {
+        this.handle(res, () => getSchedulesByDoctorId(req))
+    }
+
+    static replaceSchedules(req: Request, res: Response) {
+        this.handle(res, () => replaceDoctorSchedules(req))
+    }
+
+    static deleteSchedules(req: Request, res: Response) {
+        this.handle(res, () => deleteDoctorSchedule(req))
+    }
 }
 
 export default doctorController
