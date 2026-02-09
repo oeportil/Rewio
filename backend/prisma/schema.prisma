@@ -28,6 +28,7 @@ model User {
   clinicsOwned Clinic[]
   doctor       Doctor?
   patient      Patient?
+  clinicUsers  ClinicUser[]
 }
 
 model Clinic {
@@ -48,8 +49,9 @@ model Clinic {
   services     Service[]
   appointments Appointment[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  clinicUsers ClinicUser[]
 }
 
 model Doctor {
@@ -60,12 +62,14 @@ model Doctor {
   color     String
   active    Boolean @default(true)
 
-  schedules    DoctorSchedule[]
-  appointments Appointment[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  clinic       Clinic           @relation(fields: [clinicId], references: [id])
-  user         User             @relation(fields: [userId], references: [id])
+  schedules       DoctorSchedule[]
+  appointments    Appointment[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  clinic          Clinic           @relation(fields: [clinicId], references: [id])
+  user            User             @relation(fields: [userId], references: [id])
+  doctorBlocks    DoctorBlock[]
+  doctorVacations DoctorVacation[]
 
   @@unique([clinicId, userId])
 }
@@ -134,7 +138,9 @@ model Appointment {
   patient Patient @relation(fields: [patientId], references: [id])
   service Service @relation(fields: [serviceId], references: [id])
 
-  createdAt DateTime @default(now())
+  createdAt              DateTime                @default(now())
+  appointmentReschedules AppointmentReschedule[]
+  appointmentReminders   AppointmentReminder[]
 
   @@unique([doctorId, date, startTime])
 }
@@ -151,6 +157,80 @@ enum userRole {
   clinic
   doctor
   patient
+}
+
+model ClinicUser {
+  id       Int        @id @default(autoincrement())
+  clinicId Int
+  userId   Int
+  role     ClinicRole
+  status   Boolean    @default(true)
+
+  clinic Clinic @relation(fields: [clinicId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([clinicId, userId])
+}
+
+enum ClinicRole {
+  owner
+  admin
+  doctor
+  receptionist
+}
+
+model DoctorBlock {
+  id        Int      @id @default(autoincrement())
+  doctorId  Int
+  date      DateTime
+  startTime String
+  endTime   String
+  reason    String?
+
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+
+  @@index([doctorId, date])
+}
+
+model DoctorVacation {
+  id        Int      @id @default(autoincrement())
+  doctorId  Int
+  startDate DateTime
+  endDate   DateTime
+  reason    String?
+
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+}
+
+model AppointmentReschedule {
+  id            Int      @id @default(autoincrement())
+  appointmentId Int
+  oldDate       DateTime
+  oldStartTime  String
+  oldEndTime    String
+  newDate       DateTime
+  newStartTime  String
+  newEndTime    String
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+}
+
+model AppointmentReminder {
+  id            Int             @id @default(autoincrement())
+  appointmentId Int
+  sendAt        DateTime
+  channel       ReminderChannel
+  sent          Boolean         @default(false)
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+}
+
+enum ReminderChannel {
+  email
+  sms
+  whatsapp
 }
 
 // MedicalRecord model is commented, but you can implement it later on fase 2 :) niiiggaaaa

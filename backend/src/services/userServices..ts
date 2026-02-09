@@ -3,6 +3,8 @@ import { User } from "../generated/prisma";
 import jwt from 'jsonwebtoken';
 import { SECRET_KEY, UNEXPECTED_ERROR } from "../consts";
 import { prisma } from "../config/client";
+import { getUserByToken, paginateAdvanced } from "../utils";
+import { Request } from "express";
 
 export const login = async (email: string, password: string) => {
     //buscar usuario si no existe
@@ -47,4 +49,93 @@ export const saveUser = async (user: User) => {
     //validando que no hubo errores en la inserción
     if (!success) throw new Error(UNEXPECTED_ERROR);
     return true;
+}
+
+export const getMe = async (req: Request) => {
+    const { id } = getUserByToken(req);
+    const user = await prisma.user.findFirst({
+        where: { id: id, logicDel: false },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            status: true,
+            createdAt: true
+        }
+    })
+
+    if (!user) throw new Error("Usuario no existe")
+    return user
+}
+
+export const updateMe = async (req: Request) => {
+    const { name, email } = req.body
+    const { id } = getUserByToken(req);
+    const exists = await prisma.user.findFirst({
+        where: {
+            email,
+            id: { not: id },
+            logicDel: false
+        }
+    })
+
+    if (exists) throw new Error("Email ya está en uso")
+
+    const updated = await prisma.user.update({
+        where: { id: id },
+        data: { name, email }
+    })
+
+    if (!updated) throw new Error(UNEXPECTED_ERROR)
+    return true
+}
+
+export const changePassword = async (req: Request) => {
+    const { id } = getUserByToken(req);
+    const { oldPass, newPass } = req.body
+    const user = await prisma.user.findUnique({ where: { id: id } })
+    if (!user) throw new Error("Usuario no existe")
+
+    const valid = bcrypt.compareSync(oldPass, user.password)
+    if (!valid) throw new Error("Contraseña actual incorrecta")
+
+    const hashed = bcrypt.hashSync(newPass)
+
+    await prisma.user.update({
+        where: { id: id },
+        data: { password: hashed }
+    })
+
+    return true
+}
+
+export const getAllUsers = async (req: Request) => {
+
+    //retornar los doctores
+    return paginateAdvanced("user", {
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        searchFields: ["name", "slug", "email", "phone"],
+        filters: {
+            status: req.query.status,
+            logicDel: false
+        }
+    })
+
+}
+
+export const changeUserStatus = async (id: number, status: boolean) => {
+    return prisma.user.update({
+        where: { id },
+        data: { status }
+    })
+}
+
+export const deleteUser = async (id: number) => {
+    return prisma.user.update({
+        where: { id },
+        data: { logicDel: true, status: false }
+    })
 }

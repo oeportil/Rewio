@@ -1,10 +1,13 @@
 import { Router } from "express";
 import doctorController from "../controllers/doctorController";
+import { authMiddleware } from "../middlewares";
 
 const router = Router();
 
+router.use(authMiddleware)
 router.post('/', doctorController.create)
 router.get('/:clinicId', doctorController.getMyDoctorsByClinic)
+router.get('/:id/availability')
 router.get('/:clinicId/:doctorId', doctorController.getDoctorById)
 router.patch('/:clinicId', doctorController.update)
 router.put('/:clinicId', doctorController.changeStatus)

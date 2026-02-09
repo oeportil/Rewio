@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import BaseController from "./baseController";
 import { changeDoctorStatus, createDoctor, createScheduleDoctor, deleteDoctor, deleteDoctorSchedule, getDoctorById, getMyDoctors, getSchedulesByDoctorId, replaceDoctorSchedules, updateDoctor } from "../services/doctorService";
 import { Doctor, DoctorSchedule } from "../generated/prisma";
+import { getDoctorAvailability } from "../services/availabilityService";
 
 class doctorController extends BaseController {
 
@@ -23,6 +24,16 @@ class doctorController extends BaseController {
     }
     static delete(req: Request, res: Response) {
         this.handle<Doctor>(res, () => deleteDoctor(req))
+    }
+
+
+    static availability(req: Request, res: Response) {
+        const { id } = req.params
+        const { date, serviceId } = req.query
+
+        return this.handle(res, () =>
+            getDoctorAvailability(Number(id), String(date), Number(serviceId))
+        )
     }
 
     //#region Schedules

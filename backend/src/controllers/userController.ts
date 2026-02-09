@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { login, saveUser } from "../services/userServices.";
+import { changePassword, getMe, login, saveUser, updateMe } from "../services/userServices.";
 import BaseController from "./baseController";
 
 
@@ -17,6 +17,18 @@ class userController extends BaseController {
             () => saveUser(req.body),
             "Usuario creado correctamente"
         );
+    }
+
+    static getMe(req: Request, res: Response) {
+        return this.handle(res, () => getMe(req))
+    }
+
+    static updateMe(req: Request, res: Response) {
+        return this.handle(res, () => updateMe(req), "Perfil actualizado")
+    }
+
+    static changePassword(req: Request, res: Response) {
+        return this.handle(res, () => changePassword(req), "Contraseña actualizada")
     }
 
 }

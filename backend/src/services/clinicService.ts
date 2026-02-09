@@ -22,9 +22,20 @@ export const createClinic = async (clinic: Clinic) => {
         ownerId: clinic.ownerId,
         status: true
     }
-    const created = await prisma.clinic.create({ data: newClicnic });
-    if (!created) throw new Error(UNEXPECTED_ERROR);
-    return created
+
+    return prisma.$transaction((async (tx) => {
+        const created = await tx.clinic.create({ data: newClicnic });
+
+        await tx.clinicUser.create({
+            data: {
+                clinicId: created.id,
+                userId: created.ownerId,
+                role: "owner"
+            }
+        })
+        if (!created) throw new Error(UNEXPECTED_ERROR);
+        return created
+    }))
 }
 
 export const getAllClinics = async (req: Request) => {
