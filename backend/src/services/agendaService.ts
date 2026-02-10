@@ -3,6 +3,7 @@ import { getUserByToken } from "../utils"
 import { Request } from "express"
 import { getDoctorScheduleByServAndDate } from "./availabilityService"
 
+
 async function assertClinicOwnership(clinicId: number, userId: number) {
     const clinic = await prisma.clinic.findFirst({
         where: { id: clinicId, ownerId: userId, status: true }
@@ -24,16 +25,17 @@ export const getDoctorAgenda = async (req: Request) => {
 
     const targetDate = new Date(date)
 
-    const { schedules, appointments } =
-        await getDoctorScheduleByServAndDate(targetDate, doctorId)
+    // const { schedules, appointments } =
+    //     await getDoctorScheduleByServAndDate(targetDate, doctorId)
 
     return {
         doctorId,
         date: targetDate,
-        schedules,
-        appointments
+        // schedules,
+        // appointments
     }
 }
+
 
 export const getClinicAgenda = async (req: Request) => {
     const user = getUserByToken(req)

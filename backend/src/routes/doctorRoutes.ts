@@ -7,7 +7,7 @@ const router = Router();
 router.use(authMiddleware)
 router.post('/', doctorController.create)
 router.get('/:clinicId', doctorController.getMyDoctorsByClinic)
-router.get('/:id/availability')
+router.get('/:id/availability', doctorController.availability)
 router.get('/:clinicId/:doctorId', doctorController.getDoctorById)
 router.patch('/:clinicId', doctorController.update)
 router.put('/:clinicId', doctorController.changeStatus)
@@ -23,7 +23,6 @@ router.use('/schedules', (() => {
     return sche
 })())
 
-router.get('/schedules')
 
 
 export default router;

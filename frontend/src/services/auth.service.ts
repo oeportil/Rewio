@@ -26,3 +26,13 @@ export const loginAction = async ({
 }) => {
   return postBase({ data: { email, password }, errorfun }, "/auth/login");
 };
+
+export const registerAction = async ({
+  data,
+  errorfun,
+}: {
+  data: unknown
+  errorfun: (options: Toptions) => void;
+}) => {
+  return postBase({ data, errorfun }, "/auth/save");
+};

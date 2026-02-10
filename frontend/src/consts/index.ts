@@ -32,4 +32,10 @@ export const roles = [
     'patient'
 ]
 
-export const regRoles = roles.map(r => ({ values: r, label: r }))
+export const regRoles = [
+    { id: 1, value: "admin", label: "administrador" },
+    { id: 2, value: "clinic", label: "Clinica - Deseo Adquirir el Servicio" },
+    { id: 3, value: "doctor", label: "Doctor - Formo Parte de una Clinica" },
+    { id: 4, value: "patient", label: "Paciente - Deseo Agendar una Cita" },
+
+]

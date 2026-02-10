@@ -32,7 +32,7 @@ export const getServicesByClinic = async (req: Request) => {
     await assertClinicOwnership(clinicId, user.id)
 
     return prisma.service.findMany({
-        where: { clinicId, status: true }
+        where: { clinicId, active: true }
     })
 }
 
@@ -40,7 +40,7 @@ export const getServicesByClinic = async (req: Request) => {
 export const updateService = async (req: Request) => {
     const user = getUserByToken(req)
     const id = Number(req.params.id)
-    const { name, duration, price, status } = req.body
+    const { name, duration, price, active } = req.body
 
     const service = await prisma.service.findUnique({ where: { id } })
     if (!service) throw new Error("Servicio no existe")
@@ -49,7 +49,7 @@ export const updateService = async (req: Request) => {
 
     return prisma.service.update({
         where: { id },
-        data: { name, duration, price, status }
+        data: { name, duration, price, active }
     })
 }
 

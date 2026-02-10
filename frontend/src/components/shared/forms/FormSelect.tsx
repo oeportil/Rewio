@@ -24,10 +24,15 @@ const FormSelect = ({
       onChange={onChange}
       name={name}
       className={`${className} border border-gray-300 rounded-sm 
-        py-1 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 
+        py-1 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 
         focus:border-transparent`}
       disabled={disabled}
+      defaultValue={""}
     >
+      <option value="" disabled>
+        {" "}
+        Seleccionar una opcion
+      </option>
       {options.map((option) => (
         <option key={option.id} value={option.value}>
           {option.label}

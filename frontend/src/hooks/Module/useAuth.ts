@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { loginAction } from "@/services/auth.service";
+import { loginAction, registerAction } from "@/services/auth.service";
 import useStoreAuth from "@/store/useStoreAuth";
 import useNotification from "../logic/useNotification";
 import { formDataKeysAndValues } from "@/utils/index";
@@ -49,12 +49,14 @@ const useAuth = () => {
     const register = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         //extraer las keys y las values del formulario
-        const credentials = formDataKeysAndValues<{ email: string, password: string }>(e)
+        const credentials = formDataKeysAndValues<{ email: string, password: string, confpass: string, role: string }>(e)
         //validar las cuestiones
-        if (!credentials.email || !credentials.password)
+        if (!credentials.email || !credentials.password || !credentials.role || !credentials.confpass)
             return showNotification({ type: "warning", content: "Faltan datos necesarios" });
+
+        if (credentials.password != credentials.confpass) return showNotification({ type: "warning", content: "La contraseña debe de coinsidir en ambos campos" });
         //consultar
-        const response = await loginAction({ ...credentials, errorfun: showNotification });
+        const response = await registerAction({ data: credentials, errorfun: showNotification });
         //guardar en el token
         console.log(response)
         setToken(response.data.token)
