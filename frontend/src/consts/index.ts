@@ -25,3 +25,11 @@ after:-translate-x-1/2
 
 hover:after:w-full`;
 
+export const roles = [
+    'admin',
+    'clinic',
+    'doctor',
+    'patient'
+]
+
+export const regRoles = roles.map(r => ({ values: r, label: r }))

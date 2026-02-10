@@ -23,13 +23,18 @@ export default function FormPasswordInput({
 
   return (
     <div>
-      <label htmlFor={id || "passwordInput"}>{labelText}</label>
+      <label
+        htmlFor={id || "passwordInput"}
+        className=" text-sm font-bold text-sky-950"
+      >
+        {labelText}
+      </label>
 
-      <div className="relative">
+      <div className="relative focus:ring-1 focus:ring-sky-500 group border border-gray-300 rounded-sm">
         <input
           id={id || "passwordInput"}
           type={showPassword ? "text" : "password"}
-          className={`border border-gray-300 rounded-sm p-1 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500  focus:border-transparent ${InputClassName}`}
+          className={`  text-sm focus:outline-none  focus:border-transparent ${InputClassName}`}
           placeholder={showPassword ? placeholder : "**********"}
           {...props}
         />
@@ -37,7 +42,7 @@ export default function FormPasswordInput({
         <button
           type="button"
           onClick={() => toggleShowPassword()}
-          className="absolute top-2 right-3 cursor-pointer text-2xl text-gray-400 hover:scale-105 transition"
+          className="absolute  right-3 cursor-pointer text-2xl text-gray-400 hover:scale-105 transition"
         >
           {showPassword ? <FiEyeOff /> : <FiEye />}
         </button>

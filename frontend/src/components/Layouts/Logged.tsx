@@ -6,15 +6,15 @@ import SideBar from "../shared/SideBar";
 import { Layout } from "antd";
 
 const Logged = () => {
-  const { pathname } = useLocation();
-  const token = useStoreAuth((set) => set.token);
-  useEffect(() => {
-    if (!token) {
-      window.location.href = "/login";
-    }
-  }, [pathname, token]);
+  // const { pathname } = useLocation();
+  // const token = useStoreAuth((set) => set.token);
+  // useEffect(() => {
+  //   if (!token) {
+  //     window.location.href = "/login";
+  //   }
+  // }, [pathname, token]);
 
-  if (!token) return null;
+  // if (!token) return null;
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <SideBar />
