@@ -36,15 +36,15 @@ const Login = () => {
             onSubmit={login}
             noValidate
           >
-            <div className="bg-slate-300 p-3 rounded-lg r">
-              <Logo className="w-40" />
-            </div>
+            <Logo className="w-40" />
+
             <p className="text-sm text-gray-500/90 my-3">
               Volviste! Inicia sesión para continuar
             </p>
 
             <FormGroup className="w-full ">
               <FormInput
+                labelText="Correo Electronico"
                 type="email"
                 placeholder="Email"
                 InputClassName="w-full p-4 py-2"
@@ -55,7 +55,7 @@ const Login = () => {
 
             <FormGroup className="w-full">
               <FormPasswordInput
-                labelText=""
+                labelText="Contraseña"
                 placeholder="Tu contraseña"
                 InputClassName="w-full p-4 py-2"
                 name="password"
@@ -73,7 +73,7 @@ const Login = () => {
 
             <FormButton
               type="submit"
-              className="mt-8 w-full text-sm xl:text-sm hover:opacity-90 transition-opacity font-semibold"
+              className="mt-8 w-full text-sm xl:text-sm hover:opacity-90 transition-opacity font-semibold border border-sky-500 text-sky-500"
             >
               Iniciar Sesión
             </FormButton>

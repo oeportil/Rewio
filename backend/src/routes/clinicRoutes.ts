@@ -7,6 +7,7 @@ const router = Router();
 router.use(authMiddleware)
 router.post('/', clinicController.create)
 router.get('/', clinicController.getAll)
+router.get('/owner', clinicController.getMyClinics)
 router.get('/my-clinic', clinicController.getMyClinic)
 router.get('/:id', clinicController.getById)
 router.put('/:id', clinicController.changeStatus)

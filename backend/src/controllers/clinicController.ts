@@ -10,11 +10,11 @@ import { getUserByToken } from "../utils";
 class clinicController extends BaseController {
 
     static create(req: Request, res: Response) {
-        return this.handle<Clinic>(res, () => createClinic(req.body));
+        return clinicController.handle<Clinic>(res, () => createClinic(req.body));
     }
 
     static getAll(req: Request, res: Response) {
-        return this.handle(
+        return clinicController.handle(
             res,
             () => getAllClinics(req)
         );
@@ -22,7 +22,7 @@ class clinicController extends BaseController {
 
     static getById(req: Request, res: Response) {
         const { id } = req.params
-        return this.handle<Clinic>(
+        return clinicController.handle<Clinic>(
             res,
             () => getClinicById(id.toString()),
         );
@@ -31,7 +31,7 @@ class clinicController extends BaseController {
     static changeStatus(req: Request, res: Response) {
         const { id } = req.params
         const { status } = req.body
-        return this.handle<Clinic>(
+        return clinicController.handle<Clinic>(
             res,
             () => changeClinicStatus(id, status)
         );
@@ -39,7 +39,7 @@ class clinicController extends BaseController {
 
     static update(req: Request, res: Response) {
         const { id } = req.params
-        return this.handle<Clinic>(
+        return clinicController.handle<Clinic>(
             res,
             () => updateClinic(id, req.body),
             "Clinica modificada correctamente"
@@ -48,21 +48,21 @@ class clinicController extends BaseController {
 
     static getBySlug(req: Request, res: Response) {
         const { slug } = req.params
-        return this.handle<Clinic>(
+        return clinicController.handle<Clinic>(
             res,
             () => getClinicBySlug(slug)
         );
     }
 
     static getMyClinic(req: Request, res: Response) {
-        return this.handle<Clinic>(res, () => {
+        return clinicController.handle<Clinic>(res, () => {
             const user = getUserByToken(req);
             return getClinicByOwner(user.id);
         })
     }
 
     static getMyClinics(req: Request, res: Response) {
-        return this.handle(res, () => {
+        return clinicController.handle(res, () => {
             const user = getUserByToken(req);
             return getClinicsByOwner(user.id, req);
         })

@@ -1,11 +1,12 @@
 import CAdmin from "@/components/app/Clinics/CAdmin";
 import CClinic from "@/components/app/Clinics/CClinic";
 import CPatient from "@/components/app/Clinics/CPatient";
+import { useUserStore } from "@/store/useUserStore";
 
 const Clinics = () => {
-  const role = "admin";
+  const user = useUserStore((set) => set.user);
 
-  switch (role) {
+  switch (user?.role) {
     case "patient":
       return <CPatient />;
     case "admin":

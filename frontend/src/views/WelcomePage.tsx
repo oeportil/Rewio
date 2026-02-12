@@ -3,7 +3,7 @@ import Logo from "@/components/shared/Logo";
 const WelcomePage = () => {
   return (
     <div className="text-center mx-auto flex flex-col items-center justify-center h-full">
-      <div className="bg-slate-300 p-3 rounded-lg r">
+      <div className="">
         <Logo className="w-64" />
       </div>
 

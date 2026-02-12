@@ -5,6 +5,8 @@ import WelcomePage from "./views/WelcomePage";
 import Logged from "./components/Layouts/Logged";
 import Clinics from "./views/Clinics";
 import Register from "./views/Register";
+import ClinicView from "./views/ClinicView";
+import User from "./views/User";
 
 const Router = () => {
   return (
@@ -17,6 +19,8 @@ const Router = () => {
           <Route path="/dashboard" element={<Logged />}>
             <Route index element={<WelcomePage />} />
             <Route path="clinics" element={<Clinics />} />
+            <Route path="user/:user" element={<User />} />
+            <Route path="clinics/:slug" element={<ClinicView />} />
           </Route>
         </Routes>
       </BrowserRouter>

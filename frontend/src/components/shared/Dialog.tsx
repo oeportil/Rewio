@@ -13,11 +13,7 @@ const Dialog = ({ children, buttonContent, cleanFunc }: TDialog) => {
   const { isOpen, openModal, closeModal, cleanInside } = useModal();
   return (
     <>
-      <FormButton
-        type="button"
-        className="text-sm xl:text-sm py-3 rounded-xl hover:opacity-90 transition-opacity font-semibold md:max-w-56 w-full"
-        click={openModal}
-      >
+      <FormButton type="button" click={openModal}>
         {buttonContent}
       </FormButton>
       <Modal

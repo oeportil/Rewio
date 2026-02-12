@@ -19,7 +19,7 @@ export const createClinic = async (clinic: Clinic) => {
         phone: clinic.phone,
         slug,
         name: clinic.name,
-        ownerId: clinic.ownerId,
+        ownerId: +clinic.ownerId,
         status: true
     }
 
@@ -45,8 +45,10 @@ export const getAllClinics = async (req: Request) => {
         search: req.query.search as string,
         searchFields: ["name", "slug", "email", "phone"],
         filters: {
-            status: req.query.status
-        }
+            status: req.query.status,
+
+        },
+        include: { owner: true }
     })
 }
 export const getClinicById = async (id: string) => {
@@ -70,11 +72,11 @@ export const changeClinicStatus = async (id: string, status: boolean) => {
 }
 
 export const updateClinic = async (id: string, clinic: Clinic) => {
-    if (parseInt(id)) throw new Error("Id invalido");
+    if (!parseInt(id)) throw new Error("Id invalido");
     const foundClinic = await prisma.clinic.count({ where: { id: +id } });
     if (foundClinic <= 0) throw new Error("No existe la clinica seleccionada");
-
-    const updatedClinic = await prisma.clinic.update({ where: { id: +id }, data: clinic });
+    const { ownerId, ...rest } = clinic;
+    const updatedClinic = await prisma.clinic.update({ where: { id: +id }, data: { ...rest } });
     return updatedClinic;
 }
 

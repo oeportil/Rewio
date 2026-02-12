@@ -13,7 +13,7 @@
 //     }
 // }
 import type { Toptions } from "../types";
-import { postBase } from "./base/base.service";
+import { getBase, postBase } from "./base/base.service";
 
 export const loginAction = async ({
   email,
@@ -24,7 +24,7 @@ export const loginAction = async ({
   password: string;
   errorfun: (options: Toptions) => void;
 }) => {
-  return postBase({ data: { email, password }, errorfun }, "/auth/login");
+  return postBase({ data: { email, password }, errorfun }, "/user/login");
 };
 
 export const registerAction = async ({
@@ -34,5 +34,10 @@ export const registerAction = async ({
   data: unknown
   errorfun: (options: Toptions) => void;
 }) => {
-  return postBase({ data, errorfun }, "/auth/save");
+  return postBase({ data, errorfun }, "/user/save");
 };
+
+
+export const getMeAction = async () => {
+  return await getBase({ page: 1, limit: 1, search: "", errorfun: () => { } }, "/user/me");
+}

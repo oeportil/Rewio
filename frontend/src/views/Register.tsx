@@ -29,9 +29,7 @@ const Register = () => {
             onSubmit={register}
             noValidate
           >
-            <div className="bg-slate-300 p-3 rounded-lg r">
-              <Logo className="w-40" />
-            </div>
+            <Logo className="w-40" />
             <p className="text-sm text-gray-500/90 my-3">
               Registrarme gratuitamente
             </p>
@@ -90,7 +88,7 @@ const Register = () => {
             </div>
             <FormButton
               type="submit"
-              className="mt-8 w-full text-sm xl:text-sm hover:opacity-90 transition-opacity font-semibold"
+              className=" border border-sky-500 text-sky-500 mt-8 w-full text-sm xl:text-sm hover:opacity-90 transition-opacity font-semibold"
             >
               Crear cuenta
             </FormButton>

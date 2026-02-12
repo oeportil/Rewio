@@ -25,7 +25,7 @@ const FormSelect = ({
       name={name}
       className={`${className} border border-gray-300 rounded-sm 
         py-1 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 
-        focus:border-transparent`}
+        focus:border-transparent w-full`}
       disabled={disabled}
       defaultValue={""}
     >

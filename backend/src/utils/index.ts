@@ -18,10 +18,8 @@ export async function isAdmin(id: number = 0) {
     if (!findUser) {
         return false;
     }
-    //extraer el rol(aun no se sabe como se manejaran los roles)
-
-    //retornar si es admin 
-    findUser.status
+    //extraer el rol y retornar
+    return findUser.role === "admin" ? true : false
 }
 
 
@@ -134,6 +132,7 @@ type PaginationParams = {
     searchFields?: string[];
     filters?: Record<string, any>;
     orderBy?: Record<string, "asc" | "desc">;
+    include?: any
 };
 
 export async function paginateAdvanced<T extends keyof PrismaClient>(
@@ -146,14 +145,15 @@ export async function paginateAdvanced<T extends keyof PrismaClient>(
         search,
         searchFields = [],
         filters = {},
-        orderBy = { id: "desc" }
+        orderBy = { id: "desc" },
+        include
     } = params;
 
     const skip = (page - 1) * limit;
 
     const where: any = { ...filters };
 
-    // 🔍 Search on dynamic fields
+    // Search on dynamic fields
     if (search && searchFields.length) {
         where.OR = searchFields.map(field => ({
             [field]: {
@@ -168,7 +168,8 @@ export async function paginateAdvanced<T extends keyof PrismaClient>(
             where,
             skip,
             take: limit,
-            orderBy
+            orderBy,
+            ...(include ? { include } : {})
         }),
         (prisma[model] as any).count({ where })
     ]);

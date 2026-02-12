@@ -11,17 +11,15 @@ type TApiResponse<T> = {
 function usePagination<T>(key: string) {
     const [values, setValues] = useState<T[]>([]);
     const [pagination, setPagination] = useState<TPagination>({
-        hasNextPage: false,
-        hasPreviousPage: false,
         limit: 10,
         page: 1,
-        totalCount: 0,
-        totalPages: 0
+        total: 0,
+        pages: 0
     });
 
-    const pagfunc = (data: TApiResponse<T>) => {
-        setValues(data[key])
-        setPagination(data.pagination);
+    const pagfunc = (value: TApiResponse<T>) => {
+        setValues(value[key])
+        setPagination(value.pagination);
     }
 
     const handlePag = ({ limit, page, search }: Tpagination,

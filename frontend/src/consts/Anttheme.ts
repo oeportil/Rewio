@@ -1,7 +1,7 @@
 export const anttheme = {
     token: {
         // Seed Token
-        colorPrimary: "#fd9a00",
+        colorPrimary: "#00a6f4",
         borderRadius: 2,
     },
 }

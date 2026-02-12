@@ -4,21 +4,32 @@ import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
 import SideBar from "../shared/SideBar";
 import { Layout } from "antd";
+import { getMeAction } from "@/services/auth.service";
+import { useUserStore } from "@/store/useUserStore";
 
 const Logged = () => {
-  // const { pathname } = useLocation();
-  // const token = useStoreAuth((set) => set.token);
-  // useEffect(() => {
-  //   if (!token) {
-  //     window.location.href = "/login";
-  //   }
-  // }, [pathname, token]);
+  const { pathname } = useLocation();
+  const token = useStoreAuth((set) => set.token);
+  const { saveUser, user } = useUserStore();
+  const getME = async () => {
+    const actualuser = await getMeAction();
+    if (actualuser.status) saveUser(actualuser.value);
+  };
+  useEffect(() => {
+    if (!token) {
+      window.location.href = "/login";
+    } else getME();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, token]);
 
-  // if (!token) return null;
+  if (!token) return null;
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <SideBar />
       <div className="p-4 w-full">
+        <div className="flex justify-end">
+          <p className="text-sm font-bold text-sky-900">{user?.email}</p>
+        </div>
         <Outlet />
       </div>
     </Layout>

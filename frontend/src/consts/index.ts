@@ -39,3 +39,9 @@ export const regRoles = [
     { id: 4, value: "patient", label: "Paciente - Deseo Agendar una Cita" },
 
 ]
+
+export const roleLabels: Record<string, string> = {
+    admin: "Administrador",
+    patient: "Paciente",
+    clinic: "Propietario",
+};
