@@ -7,13 +7,19 @@ type TDialog = {
   children: ReactNode;
   buttonContent: ReactNode;
   cleanFunc?: (v: null) => void;
+  buttonStyles?: string;
 };
 
-const Dialog = ({ children, buttonContent, cleanFunc }: TDialog) => {
+const Dialog = ({
+  children,
+  buttonContent,
+  cleanFunc,
+  buttonStyles,
+}: TDialog) => {
   const { isOpen, openModal, closeModal, cleanInside } = useModal();
   return (
     <>
-      <FormButton type="button" click={openModal}>
+      <FormButton type="button" click={openModal} className={buttonStyles}>
         {buttonContent}
       </FormButton>
       <Modal

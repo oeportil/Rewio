@@ -3,15 +3,26 @@ import type { apiTpag, IUser, Tpagination } from "@/types/index";
 import usePagination from "../logic/usePagination";
 import useNotification from "../logic/useNotification";
 import useModal from "@/store/useModal";
-import { getApisUsers, getApisClinicOwners, updateApiUser, createApiUser } from "@/services/user.service";
+import { getApisUsers, getApisClinicOwners, updateApiUser, createApiUser, deleteApiUser, changePassApiUser } from "@/services/user.service";
+import useStoreAuth from "@/store/useStoreAuth";
 
 
-const useUser = () => {
+const useUser = (fecthData: boolean = true) => {
     const { contextHolder, showNotification } = useNotification()
     const { pagfunc, values, pagination, handlePag } = usePagination<IUser>("data");
     const { pagfunc: owFunc, values: owners, } = usePagination<IUser>("data");
     const { closeModal, openModal } = useModal();
     const [editingUser, setEditingUser] = useState<IUser | null>(null);
+    const closeSesion = useStoreAuth((set) => set.clearToken);
+    const [chPass, setChPass] = useState<{
+        oldPass: string,
+        newPass: string,
+        newPass2: string
+    }>({
+        oldPass: "",
+        newPass: "",
+        newPass2: ""
+    });
 
     const [pag, setPag] = useState<apiTpag>({
         errorfun: showNotification,
@@ -38,6 +49,24 @@ const useUser = () => {
         owFunc(response.value)
     }
 
+    const changePassword = async () => {
+        if (chPass.newPass != chPass.newPass2) return showNotification({ type: "warning", content: "Las contraseñas deben de ser las mismas" });
+        const { oldPass, newPass } = chPass
+        const response = await changePassApiUser({ errorfun: showNotification, data: { oldPass, newPass } });
+        if (response && response.status) showNotification({ type: "success", content: "Contraseña modificada correctamente" });
+        else showNotification({ type: "error", content: response.msg });
+        return
+    }
+
+    const disableUser = async () => {
+        const response = await deleteApiUser({ errorfun: showNotification })
+        if (response && response.status) {
+            closeSesion()
+            window.location.href = "/login"
+        }
+        else showNotification({ type: "error", content: response.msg });
+    }
+
     const saveUser = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -48,7 +77,7 @@ const useUser = () => {
             : await createApiUser({ data: formData, errorfun: showNotification });
         //success or not
         if (response && response.status) {
-            showNotification({ type: "success", content: `Gimnasio ${editingUser ? "actualizado" : "creado"} correctamente` });
+            showNotification({ type: "success", content: `Usuario ${editingUser ? "actualizado" : "creado"} correctamente` });
             closeModal();
             getUsers();
         } else {
@@ -65,10 +94,12 @@ const useUser = () => {
     }
 
     useEffect(() => {
-        getUsers();
-        getClinicOwners();
+        if (fecthData) {
+            getUsers();
+            getClinicOwners();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pag])
+    }, [pag, fecthData])
     return {
         contextHolder,
         showNotification,
@@ -80,7 +111,11 @@ const useUser = () => {
         openEdit,
         editingUser,
         setEditingUser,
-        owners
+        owners,
+        disableUser,
+        setChPass,
+        chPass,
+        changePassword
     }
 }
 

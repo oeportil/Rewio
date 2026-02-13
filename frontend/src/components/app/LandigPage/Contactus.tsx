@@ -56,7 +56,8 @@ const Contactus = () => {
               <div className="w-full flex justify-center pt-4">
                 <FormButton
                   type="submit"
-                  className="font-bold flex gap-2 items-center w-full md:w-1/2 justify-center"
+                  // className="font-bold flex gap-2 items-center w-full md:w-1/2 justify-center"
+                  woback={false}
                 >
                   Enviar mi información <CiPaperplane size={20} />
                 </FormButton>

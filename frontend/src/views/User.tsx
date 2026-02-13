@@ -7,13 +7,16 @@ import {
   FaUserShield,
   FaEdit,
   FaSave,
-  FaLock,
 } from "react-icons/fa";
 import { roleLabels } from "../consts";
+import Password from "@/components/app/User/Password";
+import DangerZone from "@/components/app/User/DangerZone";
+import useUser from "@/hooks/Module/useUser";
 
 const UserProfile = () => {
   const user = useUserStore((s) => s.user);
   const [editing, setEditing] = useState(false);
+  const { chPass, changePassword, setChPass, contextHolder } = useUser(false);
 
   const [form, setForm] = useState({
     name: user?.name ?? "",
@@ -25,6 +28,7 @@ const UserProfile = () => {
 
   return (
     <ModulesLayout title="">
+      {contextHolder}
       <div className="max-w-4xl mx-auto mt-6 space-y-6">
         {/* Header */}
         <div className="bg-white border border-zinc-200 rounded-2xl p-6 flex md:flex-row flex-col space-y-4 md:space-y-0 items-center justify-between shadow-sm">
@@ -46,10 +50,9 @@ const UserProfile = () => {
                        hover:bg-sky-50 transition text-sky-600 cursor-pointer"
           >
             <FaEdit />
-            Edit Profile
+            Editar Usuario
           </button>
         </div>
-
         {/* Info */}
         <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm grid md:grid-cols-2 gap-6">
           {/* Name */}
@@ -107,17 +110,6 @@ const UserProfile = () => {
             </p>
           </div>
         </div>
-
-        {/* Role */}
-        <div>
-          <label className="text-xs text-zinc-500 flex items-center gap-2">
-            <FaUserShield /> Status
-          </label>
-          <p className="mt-1 text-sm text-zinc-700">
-            {roleLabels[user.role] ?? user.role}
-          </p>
-        </div>
-
         {/* Save */}
         {editing && (
           <div className="flex justify-end">
@@ -127,49 +119,14 @@ const UserProfile = () => {
           </div>
         )}
 
-        {/* Password */}
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm space-y-4">
-          <h3 className="text-sm font-semibold text-zinc-800 flex items-center gap-2">
-            <FaLock /> Cambiar Contraseña
-          </h3>
+        <Password
+          fields={chPass}
+          setFields={setChPass}
+          changePassword={changePassword}
+        />
 
-          <div className="md:grid md:grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="text-xs text-zinc-500">Contraseña Actual</label>
-              <input
-                type="password"
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs text-zinc-500">Contraseña nueva</label>
-              <input
-                type="password"
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="">
-              <label className="text-xs text-zinc-500">
-                Confirmar contraseña nueva
-              </label>
-              <input
-                type="password"
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <button className="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 text-sm cursor-pointer">
-              Actualizar contraseña
-            </button>
-          </div>
-        </div>
+        {/* Danger Zone */}
+        <DangerZone />
       </div>
     </ModulesLayout>
   );

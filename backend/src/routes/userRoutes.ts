@@ -11,5 +11,7 @@ route.get('/owners', AdminMiddleware, userController.getAllClinicOwners);
 route.get('/me', userController.getMe)
 route.patch('/me', userController.updateMe)
 route.put('/password-me', userController.changePassword)
+route.delete('/:id', userController.deleteUser)
+route.delete('/', userController.deleteUser)
 
 export default route;

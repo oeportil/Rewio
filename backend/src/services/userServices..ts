@@ -107,7 +107,7 @@ export const updateMe = async (req: Request) => {
 export const changePassword = async (req: Request) => {
     const { id } = getUserByToken(req);
     const { oldPass, newPass } = req.body
-    const user = await prisma.user.findUnique({ where: { id: id } })
+    const user = await prisma.user.findUnique({ where: { id: id }, select: { password: true } })
     if (!user) throw new Error("Usuario no existe")
 
     const valid = bcrypt.compareSync(oldPass, user.password)
@@ -146,9 +146,17 @@ export const changeUserStatus = async (id: number, status: boolean) => {
     })
 }
 
-export const deleteUser = async (id: number) => {
+export const deleteUser = async (req: Request) => {
+
+    const { id } = req.params
+    const idAs = id ? +id : getUserByToken(req).id
+
+
+    const user = await prisma.user.findUnique({ where: { id: idAs } })
+    if (!user) throw new Error("Usuario no existe")
+
     return prisma.user.update({
-        where: { id },
+        where: { id: idAs },
         data: { logicDel: true, status: false }
     })
 }

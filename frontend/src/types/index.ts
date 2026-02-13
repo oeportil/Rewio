@@ -8,10 +8,20 @@ export type apiTpost = {
     data: unknown
 }
 
-export type apiTpatch = {
+export type apiTpatchAndPut = {
     errorfun: (options: Toptions) => void,
     data: unknown,
-    id: number | string
+    id?: number | string
+}
+
+export type apiTget = {
+    id: number | string,
+    errorfun: (options: Toptions) => void,
+}
+
+export type apiTdelete = {
+    id?: number | string
+    errorfun: (options: Toptions) => void,
 }
 
 export type apiTpag = {

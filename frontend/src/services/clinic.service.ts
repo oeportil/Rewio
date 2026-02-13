@@ -1,4 +1,4 @@
-import type { apiTpag, apiTpatch, apiTpost } from "../types";
+import type { apiTpag, apiTpatchAndPut, apiTpost } from "../types";
 import { postBase, getBase, patchBase } from "./base/base.service";
 
 export const getApisClinics = async ({ page, limit, search, errorfun }: apiTpag) => {
@@ -15,6 +15,6 @@ export const createApiClinic = async ({ data, errorfun }: apiTpost) => {
     return postBase({ data, errorfun }, "/clinic");
 }
 
-export const updateApiClinic = async ({ data, errorfun, id }: apiTpatch) => {
+export const updateApiClinic = async ({ data, errorfun, id }: apiTpatchAndPut) => {
     return patchBase({ data, errorfun, id }, "/clinic");
 }

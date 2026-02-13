@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { changePassword, clinicOwners, getAllUsers, getMe, login, saveUser, updateMe } from "../services/userServices.";
+import { changePassword, clinicOwners, deleteUser, getAllUsers, getMe, login, saveUser, updateMe } from "../services/userServices.";
 import BaseController from "./baseController";
 
 
@@ -37,6 +37,10 @@ class userController extends BaseController {
 
     static getAllClinicOwners(req: Request, res: Response) {
         return userController.handle(res, () => clinicOwners(req))
+    }
+
+    static deleteUser(req: Request, res: Response) {
+        return userController.handle(res, () => deleteUser(req))
     }
 
 }
