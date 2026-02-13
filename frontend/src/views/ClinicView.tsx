@@ -1,7 +1,28 @@
+import Owner from "@/components/app/ClinicView/Owner";
 import ModulesLayout from "@/components/Layouts/ModulesLayout";
+import useClinic from "@/hooks/Module/useClinic";
+import { useUserStore } from "@/store/useUserStore";
+import { useEffect } from "react";
+import { useParams } from "react-router";
 
 const ClinicView = () => {
-  return <ModulesLayout title="Clinic">ClinicView</ModulesLayout>;
+  const { slug } = useParams();
+  const { getClinicBySlug, clinic } = useClinic();
+  const user = useUserStore((set) => set.user);
+  useEffect(() => {
+    getClinicBySlug(slug ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
+
+  return (
+    <ModulesLayout title={clinic.name}>
+      {user?.role != "patient" ? (
+        <Owner clinic={clinic} getClinicBySlug={getClinicBySlug} />
+      ) : (
+        <></>
+      )}
+    </ModulesLayout>
+  );
 };
 
 export default ClinicView;

@@ -45,12 +45,12 @@ const Navbar = () => {
   }, [setSize]);
 
   return (
-    <div className="h-20 fixed w-full flex items-center bg-slate-300 z-50 shadow-md">
+    <div className="h-20 fixed w-full flex items-center bg-slate-50 z-50 shadow-md">
       {width <= 768 ? (
         <>
           <div className="flex justify-between p-5  w-full">
             <a href="/">
-              <Logo className="w-36" />
+              <Logo className="w-28" />
             </a>
             <button className="" onClick={showDrawer}>
               <RxHamburgerMenu size={20} />
@@ -84,7 +84,7 @@ const Navbar = () => {
         <>
           <nav className="w-full flex items-center justify-between px-4 py-2">
             <a href="/">
-              <Logo className="w-36" />
+              <Logo className="w-28" />
             </a>
             <div className="flex items-center">
               {content.map((item) => {

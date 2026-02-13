@@ -45,7 +45,7 @@ export const postBase = async ({ data, errorfun }: apiTpost, endpoint: string) =
 
 export const patchBase = async ({ data, errorfun, id }: apiTpatchAndPut, endpoint: string) => {
     try {
-        const response = await instance.patch(`${endpoint}/${id}`, data);
+        const response = await instance.patch(id ? `${endpoint}/${id}` : `${endpoint}`, data);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {

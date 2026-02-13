@@ -9,6 +9,8 @@ export const getApisClinicOwners = async ({ page, limit, search, errorfun }: api
     return getBase({ page, limit, search, errorfun }, "/user/owners");
 }
 
+
+
 export const createApiUser = async ({ data, errorfun }: apiTpost) => {
     return postBase({ data, errorfun }, "/user");
 }
@@ -19,7 +21,7 @@ export const changePassApiUser = async ({ data, errorfun }: apiTpatchAndPut) => 
 
 
 export const updateApiUser = async ({ data, errorfun, id }: apiTpatchAndPut) => {
-    return patchBase({ data, errorfun, id }, "/user");
+    return patchBase({ data, errorfun, id }, "/user/me");
 }
 
 export const deleteApiUser = async ({ errorfun, id }: apiTdelete) => {

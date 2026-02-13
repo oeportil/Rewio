@@ -18,3 +18,7 @@ export const createApiClinic = async ({ data, errorfun }: apiTpost) => {
 export const updateApiClinic = async ({ data, errorfun, id }: apiTpatchAndPut) => {
     return patchBase({ data, errorfun, id }, "/clinic");
 }
+
+export const getClinicByslug = async (slug: string) => {
+    return getBase({ page: 1, limit: 1, search: "", errorfun: () => { } }, `/clinic/slug/${slug}`);
+}

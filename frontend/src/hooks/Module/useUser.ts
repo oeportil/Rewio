@@ -5,6 +5,7 @@ import useNotification from "../logic/useNotification";
 import useModal from "@/store/useModal";
 import { getApisUsers, getApisClinicOwners, updateApiUser, createApiUser, deleteApiUser, changePassApiUser } from "@/services/user.service";
 import useStoreAuth from "@/store/useStoreAuth";
+import { useUserStore } from "@/store/useUserStore";
 
 
 const useUser = (fecthData: boolean = true) => {
@@ -14,6 +15,7 @@ const useUser = (fecthData: boolean = true) => {
     const { closeModal, openModal } = useModal();
     const [editingUser, setEditingUser] = useState<IUser | null>(null);
     const closeSesion = useStoreAuth((set) => set.clearToken);
+    const { updateStore } = useUserStore();
     const [chPass, setChPass] = useState<{
         oldPass: string,
         newPass: string,
@@ -38,6 +40,7 @@ const useUser = (fecthData: boolean = true) => {
         search: "",
         total: 0
     });
+
 
     const getUsers = async () => {
         const response = await getApisUsers(pag);
@@ -67,19 +70,25 @@ const useUser = (fecthData: boolean = true) => {
         else showNotification({ type: "error", content: response.msg });
     }
 
-    const saveUser = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        if (!formData.get("name")) return showNotification({ type: "warning", content: "El nombre es obligatorio" });
+    const saveUser = async ({ e, name, email, id = undefined }: { e?: FormEvent<HTMLFormElement>, name?: string, email?: string, id?: number }) => {
+        let data
+        if (e) {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            if (!formData.get("name")) return showNotification({ type: "warning", content: "El nombre es obligatorio" });
+            data = formData
+        } else data = { name, email }
+
         // edit or create
         const response = editingUser
-            ? await updateApiUser({ data: formData, errorfun: showNotification, id: editingUser!.id })
-            : await createApiUser({ data: formData, errorfun: showNotification });
+            ? await updateApiUser({ data, errorfun: showNotification, id })
+            : await createApiUser({ data, errorfun: showNotification });
         //success or not
         if (response && response.status) {
             showNotification({ type: "success", content: `Usuario ${editingUser ? "actualizado" : "creado"} correctamente` });
             closeModal();
-            getUsers();
+            if (fecthData) getUsers();
+            else updateStore(response.value);
         } else {
             showNotification({ type: "error", content: response.msg });
         }

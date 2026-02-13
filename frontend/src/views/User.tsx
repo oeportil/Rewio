@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModulesLayout from "@/components/Layouts/ModulesLayout";
 import { useUserStore } from "@/store/useUserStore";
 import {
@@ -16,13 +16,23 @@ import useUser from "@/hooks/Module/useUser";
 const UserProfile = () => {
   const user = useUserStore((s) => s.user);
   const [editing, setEditing] = useState(false);
-  const { chPass, changePassword, setChPass, contextHolder } = useUser(false);
+  const {
+    chPass,
+    changePassword,
+    setChPass,
+    contextHolder,
+    saveUser,
+    setEditingUser,
+  } = useUser(false);
 
   const [form, setForm] = useState({
     name: user?.name ?? "",
     email: user?.email ?? "",
-    status: user?.status ?? "",
   });
+  useEffect(() => {
+    setEditingUser(user);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!user) return null;
 
@@ -113,7 +123,12 @@ const UserProfile = () => {
         {/* Save */}
         {editing && (
           <div className="flex justify-end">
-            <button className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+            <button
+              onClick={() => {
+                saveUser({ name: form.name, email: form.email });
+              }}
+              className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 cursor-pointer"
+            >
               <FaSave /> Guardar Cambios
             </button>
           </div>

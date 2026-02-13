@@ -2,7 +2,7 @@ import Logo from "@/components/shared/Logo";
 
 export default function Footer() {
   return (
-    <footer className="w-full flex flex-col justify-center items-center bg-slate-300 p-3">
+    <footer className="w-full flex flex-col justify-center items-center bg-slate-50 p-3">
       <div>
         <Logo className="w-44" />
       </div>

@@ -101,7 +101,7 @@ export const updateMe = async (req: Request) => {
     })
 
     if (!updated) throw new Error(UNEXPECTED_ERROR)
-    return true
+    return updated
 }
 
 export const changePassword = async (req: Request) => {

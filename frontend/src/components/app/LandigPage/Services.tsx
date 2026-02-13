@@ -50,7 +50,7 @@ const Services = () => {
             key={i}
             title="exemplo"
             description="Create a professional landing page. "
-            icon={<WiAlien size={60} className="text-gray-900" />}
+            icon={<WiAlien size={60} className="text-gray-100" />}
           />
         ))}
       </div>

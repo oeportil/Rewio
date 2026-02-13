@@ -5,7 +5,7 @@ import PaginationData from "@/components/shared/PaginationData";
 import SearchInput from "@/components/shared/SearchInput";
 
 const Cclinic = () => {
-  const { values, pag, handlePagination } = useClinic();
+  const { values, pag, handlePagination } = useClinic(true);
 
   return (
     <ModulesLayout title="Escoge una Clinica">

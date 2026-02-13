@@ -15,7 +15,7 @@ const CAdmin = () => {
     openEdit,
     editingClinic,
     setEditingClinic,
-  } = useClinic();
+  } = useClinic(true);
   return (
     <ModulesLayout title="Clinicas">
       {contextHolder}
