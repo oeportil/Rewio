@@ -17,7 +17,7 @@ const ClinicCard = ({
     <article className="relative group bg-white border border-zinc-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 ">
       <div className="relative flex items-center gap-4">
         {/* Edit button */}
-        {role != "patient" && (
+        {role === "admin" && (
           <button
             onClick={() => openEdit!(clinic)}
             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition 
