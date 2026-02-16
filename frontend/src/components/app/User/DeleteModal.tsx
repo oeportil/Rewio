@@ -5,10 +5,11 @@ import { FaExclamationTriangle, FaTrash } from "react-icons/fa";
 
 const DeleteModal = () => {
   const { disableUser } = useUser(true);
-  const { closeModal } = useModal();
+  const { close } = useModal();
 
   return (
     <Dialog
+      id="user"
       buttonContent={
         <span className="flex items-center gap-2">
           <FaTrash /> Eliminar mi Cuenta
@@ -33,7 +34,7 @@ const DeleteModal = () => {
 
         <div className="flex justify-end gap-2 pt-4">
           <button
-            onClick={closeModal}
+            onClick={() => close("user")}
             className="px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 cursor-pointer"
           >
             Cancelar
@@ -42,7 +43,7 @@ const DeleteModal = () => {
           <button
             onClick={() => {
               disableUser();
-              closeModal();
+              close("user");
             }}
             className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700 flex items-center gap-2 cursor-pointer"
           >

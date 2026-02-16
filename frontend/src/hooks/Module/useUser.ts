@@ -12,7 +12,7 @@ const useUser = (fecthData: boolean = true) => {
     const { contextHolder, showNotification } = useNotification()
     const { pagfunc, values, pagination, handlePag } = usePagination<IUser>("data");
     const { pagfunc: owFunc, values: owners, } = usePagination<IUser>("data");
-    const { closeModal, openModal } = useModal();
+    const { close, open } = useModal();
     const [editingUser, setEditingUser] = useState<IUser | null>(null);
     const closeSesion = useStoreAuth((set) => set.clearToken);
     const { updateStore } = useUserStore();
@@ -86,7 +86,7 @@ const useUser = (fecthData: boolean = true) => {
         //success or not
         if (response && response.status) {
             showNotification({ type: "success", content: `Usuario ${editingUser ? "actualizado" : "creado"} correctamente` });
-            closeModal();
+            close("user");
             if (fecthData) getUsers();
             else updateStore(response.value);
         } else {
@@ -95,7 +95,7 @@ const useUser = (fecthData: boolean = true) => {
     }
     const openEdit = (clinic: IUser) => {
         setEditingUser(clinic);
-        openModal();
+        open("user");
     }
 
     const handlePagination = (values: Tpagination) => {

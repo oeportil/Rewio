@@ -23,10 +23,7 @@ export default function FormPasswordInput({
 
   return (
     <div>
-      <label
-        htmlFor={id || "passwordInput"}
-        className=" text-sm font-bold text-sky-950"
-      >
+      <label htmlFor={id || "passwordInput"} className=" text-sm text-sky-950">
         {labelText}
       </label>
 

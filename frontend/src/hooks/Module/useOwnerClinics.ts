@@ -10,7 +10,7 @@ import { formDataKeysAndValues } from "@/utils/index";
 const useClinic = () => {
     const { contextHolder, showNotification } = useNotification()
     const { pagfunc, values, pagination, handlePag } = usePagination<IClinic>("data");
-    const { closeModal, openModal } = useModal();
+    const { close, open } = useModal();
     const [editingClinic, setEditingClinic] = useState<IClinic | null>(null);
     const [imageBase64, setImageBase64] = useState<string>("");
 
@@ -40,7 +40,7 @@ const useClinic = () => {
         //success or not
         if (response && response.status) {
             showNotification({ type: "success", content: `Clinica ${editingClinic ? "actualizada" : "creada"} correctamente` });
-            closeModal();
+            close("clinic");
             getClinicsByOwner();
         } else {
             showNotification({ type: "error", content: response.msg });
@@ -48,7 +48,7 @@ const useClinic = () => {
     }
     const openEdit = (clinic: IClinic) => {
         setEditingClinic(clinic);
-        openModal();
+        open("clinic");
     }
 
     const handlePagination = (values: Tpagination) => {

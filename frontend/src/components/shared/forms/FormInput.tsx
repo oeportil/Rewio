@@ -55,7 +55,7 @@ export default function FormInput({
       <label
         htmlFor={htmlFor}
         id={labelId}
-        className={`${LabelClassName} text-sm font-bold text-sky-950`}
+        className={`${LabelClassName} text-sm text-sky-950`}
       >
         {labelText}
       </label>

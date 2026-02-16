@@ -1,5 +1,5 @@
 import { prisma } from "../config/client"
-import { getUserByToken } from "../utils"
+import { getUserByToken, paginateAdvanced } from "../utils"
 import { Request } from "express"
 
 //helper para este servicio
@@ -13,7 +13,7 @@ async function assertClinicOwnership(clinicId: number, userId: number) {
 
 export const createService = async (req: Request) => {
     const user = getUserByToken(req)
-    const { clinicId, name, duration, price } = req.body
+    const { clinicId, name, duration, price, color } = req.body
 
     if (!clinicId || !name || !duration || !price)
         throw new Error("Campos requeridos faltantes")
@@ -21,18 +21,26 @@ export const createService = async (req: Request) => {
     await assertClinicOwnership(clinicId, user.id)
 
     return prisma.service.create({
-        data: { clinicId, name, duration, price }
+        data: { clinicId, name, duration, price, color }
     })
 }
 
 export const getServicesByClinic = async (req: Request) => {
     const user = getUserByToken(req)
-    const clinicId = Number(req.query.clinicId)
+    const clinicId = Number(req.params.id)
 
     await assertClinicOwnership(clinicId, user.id)
 
-    return prisma.service.findMany({
-        where: { clinicId, active: true }
+
+    return paginateAdvanced("service", {
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        searchFields: ["name", "price", "email", "phone"],
+        filters: {
+            clinicId,
+            active: true
+        }
     })
 }
 
@@ -40,16 +48,16 @@ export const getServicesByClinic = async (req: Request) => {
 export const updateService = async (req: Request) => {
     const user = getUserByToken(req)
     const id = Number(req.params.id)
-    const { name, duration, price, active } = req.body
+    const { name, duration, price, active, color } = req.body
 
-    const service = await prisma.service.findUnique({ where: { id } })
+    const service = await prisma.service.findUnique({ where: { id, active: true } })
     if (!service) throw new Error("Servicio no existe")
 
     await assertClinicOwnership(service.clinicId, user.id)
 
     return prisma.service.update({
         where: { id },
-        data: { name, duration, price, active }
+        data: { name, duration, price, active, color }
     })
 }
 

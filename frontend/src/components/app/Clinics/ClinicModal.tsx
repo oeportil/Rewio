@@ -21,7 +21,7 @@ const ClinicModal = ({
   editingClinic: IClinic | null;
   setEditingClinic: (v: IClinic | null) => void;
 }) => {
-  const { closeModal } = useModal();
+  const { close } = useModal();
   const { owners } = useUser();
 
   useEffect(() => {
@@ -55,6 +55,7 @@ const ClinicModal = ({
   }, [editingClinic]);
   return (
     <Dialog
+      id="clinic"
       buttonContent={
         <>
           <FaPlus /> Agregar Clinica
@@ -135,7 +136,7 @@ const ClinicModal = ({
           <div className="flex gap-2 justify-end col-span-2 mt-4">
             <FormButton
               type="button"
-              click={closeModal}
+              click={() => close("clinic")}
               className="text-white bg-red-600 hover:bg-red-800"
             >
               Cancelar

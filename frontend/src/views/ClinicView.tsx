@@ -1,4 +1,5 @@
 import Owner from "@/components/app/ClinicView/Owner";
+import Patient from "@/components/app/ClinicView/Patient";
 import ModulesLayout from "@/components/Layouts/ModulesLayout";
 import useClinic from "@/hooks/Module/useClinic";
 import { useUserStore } from "@/store/useUserStore";
@@ -15,11 +16,11 @@ const ClinicView = () => {
   }, [slug]);
 
   return (
-    <ModulesLayout title={clinic.name}>
+    <ModulesLayout title="">
       {user?.role != "patient" ? (
         <Owner clinic={clinic} getClinicBySlug={getClinicBySlug} />
       ) : (
-        <></>
+        <Patient clinic={clinic} getClinicBySlug={getClinicBySlug} />
       )}
     </ModulesLayout>
   );

@@ -11,7 +11,7 @@ import { Service } from "../generated/prisma";
 class serviceController extends BaseController {
 
     static create(req: Request, res: Response) {
-        return this.handle<Service>(
+        return serviceController.handle<Service>(
             res,
             () => createService(req),
             "Servicio creado correctamente"
@@ -20,7 +20,7 @@ class serviceController extends BaseController {
 
 
     static getByClinic(req: Request, res: Response) {
-        return this.handle<Service[]>(
+        return serviceController.handle(
             res,
             () => getServicesByClinic(req)
         );
@@ -28,7 +28,7 @@ class serviceController extends BaseController {
 
 
     static update(req: Request, res: Response) {
-        return this.handle<Service>(
+        return serviceController.handle<Service>(
             res,
             () => updateService(req),
             "Servicio actualizado correctamente"
@@ -37,7 +37,7 @@ class serviceController extends BaseController {
 
 
     static delete(req: Request, res: Response) {
-        return this.handle<Service>(
+        return serviceController.handle<Service>(
             res,
             () => deleteService(req),
             "Servicio eliminado correctamente"

@@ -84,6 +84,28 @@ export interface IPlan extends IPlanG {
 }
 
 
+//  id           Int @id @default (autoincrement())
+//   clinicId     Int
+//   name         String
+//   duration     Int
+//   price        Float
+//   color        String ?
+//     active       Boolean @default (true)
+//   createdAt    DateTime @default (now())
+//   updatedAt    DateTime @updatedAt
+export interface IService {
+    id: number,
+    clinicId: number,
+    name: string,
+    duration: number,
+    price: number,
+    color?: string,
+    active: boolean,
+    createdAt: string,
+    updatedAt: string
+}
+
+
 export interface IUser {
     email: string,
     id: number,

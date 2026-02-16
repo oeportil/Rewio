@@ -4,6 +4,7 @@ import FormButton from "./forms/FormButton";
 import useModal from "@/store/useModal";
 
 type TDialog = {
+  id: string;
   children: ReactNode;
   buttonContent: ReactNode;
   cleanFunc?: (v: null) => void;
@@ -11,25 +12,31 @@ type TDialog = {
 };
 
 const Dialog = ({
+  id,
   children,
   buttonContent,
   cleanFunc,
   buttonStyles,
 }: TDialog) => {
-  const { isOpen, openModal, closeModal, cleanInside } = useModal();
+  const modal = useModal();
+
   return (
     <>
-      <FormButton type="button" click={openModal} className={buttonStyles}>
+      <FormButton
+        type="button"
+        click={() => modal.open(id)}
+        className={buttonStyles}
+      >
         {buttonContent}
       </FormButton>
+
       <Modal
-        open={isOpen}
+        open={modal.isOpen(id)}
         onCancel={() => {
-          closeModal();
-          if (cleanFunc) cleanInside(cleanFunc);
+          modal.close(id);
+          modal.clean(cleanFunc);
         }}
-        closable={{ "aria-label": "Custom Close Button" }}
-        footer={[]}
+        footer={null}
       >
         {children}
       </Modal>

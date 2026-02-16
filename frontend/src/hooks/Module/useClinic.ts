@@ -24,7 +24,7 @@ const InitValue: IClinic = {
 const useClinic = (fetchData = false) => {
     const { contextHolder, showNotification } = useNotification()
     const { pagfunc, values, pagination, handlePag } = usePagination<IClinic>("data");
-    const { closeModal, openModal } = useModal();
+    const { close, open } = useModal();
     const [editingClinic, setEditingClinic] = useState<IClinic | null>(null);
     const [imageBase64, setImageBase64] = useState<string>("");
     const [clinic, setClinic] = useState<IClinic>(InitValue);
@@ -66,7 +66,7 @@ const useClinic = (fetchData = false) => {
         //success or not
         if (response && response.status) {
             showNotification({ type: "success", content: `Clinica ${editingClinic ? "actualizada" : "creada"} correctamente` });
-            closeModal();
+            close("clinic");
             if (fetchData) {
                 getClinics();
             }
@@ -76,7 +76,7 @@ const useClinic = (fetchData = false) => {
     }
     const openEdit = (clinic: IClinic) => {
         setEditingClinic(clinic);
-        openModal();
+        open("clinic");
     }
 
     const handlePagination = (values: Tpagination) => {

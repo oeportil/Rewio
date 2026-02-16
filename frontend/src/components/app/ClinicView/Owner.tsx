@@ -1,6 +1,7 @@
 import type { IClinic } from "@/types/index";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import CRUDServices from "./service/CRUDServices";
 
 interface Props {
   clinic: IClinic | null;
@@ -9,14 +10,13 @@ interface Props {
 
 const Owner = ({ clinic }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
-  console.log(clinic);
   return (
     <div className="p-8 bg-slate-50 min-h-screen">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center mb-10"
+        className="flex justify-between items-center mb-4 "
       >
         <div className="flex items-center gap-4">
           <img
@@ -109,6 +109,7 @@ const Owner = ({ clinic }: Props) => {
           </div>
         </motion.div>
       </div>
+      {clinic && clinic.id && <CRUDServices clinicId={clinic?.id ?? 0} />}
     </div>
   );
 };
