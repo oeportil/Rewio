@@ -23,6 +23,7 @@ export function formatDate(date: string | Date) {
     })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => void>(fn: T, delay = 400) {
     let timer: ReturnType<typeof setTimeout>;
 
