@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { createApiClinic, getApisClinics, getClinicByslug, updateApiClinic } from "@/services/clinic.service";
+import { createApiClinic, getApisClinics, getApisClinicsByOwner, getClinicByslug, updateApiClinic } from "@/services/clinic.service";
 import type { apiTpag, IClinic, Tpagination } from "@/types/index";
 import usePagination from "../logic/usePagination";
 import useNotification from "../logic/useNotification";
@@ -21,7 +21,7 @@ const InitValue: IClinic = {
     owner: { email: "", id: 0, name: "", createdAt: "", role: "", status: false, updatedAt: "" }
 }
 
-const useClinic = (fetchData = false) => {
+const useClinic = ({ fetchData = false, own = false }: { fetchData: boolean, own?: boolean }) => {
     const { contextHolder, showNotification } = useNotification()
     const { pagfunc, values, pagination, handlePag } = usePagination<IClinic>("data");
     const { close, open } = useModal();
@@ -39,7 +39,7 @@ const useClinic = (fetchData = false) => {
 
 
     const getClinics = async () => {
-        const response = await getApisClinics(pag);
+        const response = !own ? await getApisClinics(pag) : await getApisClinicsByOwner(pag);
         pagfunc(response.value)
     }
 
@@ -55,13 +55,13 @@ const useClinic = (fetchData = false) => {
 
     const saveClinic = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        if (!formData.get("name")) return showNotification({ type: "warning", content: "El nombre es obligatorio" });
+        // const formData = new FormData(e.currentTarget);
+        // if (!formData.get("name")) return showNotification({ type: "warning", content: "El nombre es obligatorio" });
         const data = formDataKeysAndValues(e);
 
         // edit or create
         const response = editingClinic
-            ? await updateApiClinic({ data: { ...data, logo: imageBase64 }, errorfun: showNotification, id: editingClinic!.id })
+            ? await updateApiClinic({ data: { ...data, ...(imageBase64 && { logo: imageBase64 }) }, errorfun: showNotification, id: editingClinic!.id })
             : await createApiClinic({ data: { ...data, logo: imageBase64 }, errorfun: showNotification });
         //success or not
         if (response && response.status) {

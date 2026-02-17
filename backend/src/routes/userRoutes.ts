@@ -7,6 +7,7 @@ route.post('/login', userController.login);
 route.post('/save', userController.saveUser);
 route.use(authMiddleware)
 route.get('/', userController.getAll);
+route.get('/doctors', userController.getAllDoctors);
 route.get('/owners', AdminMiddleware, userController.getAllClinicOwners);
 route.get('/me', userController.getMe)
 route.patch('/me', userController.updateMe)

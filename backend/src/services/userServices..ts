@@ -124,8 +124,7 @@ export const changePassword = async (req: Request) => {
 }
 
 export const getAllUsers = async (req: Request) => {
-
-    //retornar los doctores
+    //retornar los usuarios
     return paginateAdvanced("user", {
         page: Number(req.query.page),
         limit: Number(req.query.limit),
@@ -134,6 +133,22 @@ export const getAllUsers = async (req: Request) => {
         filters: {
             status: req.query.status,
             logicDel: false
+        }
+    })
+
+}
+
+export const getAllDoctors = async (req: Request) => {
+    //retornar los doctores
+    return paginateAdvanced("user", {
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        searchFields: ["name", "email"],
+        filters: {
+            status: req.query.status,
+            logicDel: false,
+            role: "doctor"
         }
     })
 

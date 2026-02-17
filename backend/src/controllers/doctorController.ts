@@ -7,23 +7,23 @@ import { getDoctorAvailability } from "../services/availabilityService";
 class doctorController extends BaseController {
 
     static create(req: Request, res: Response) {
-        this.handle<Doctor>(res, () => createDoctor(req))
+        doctorController.handle<Doctor>(res, () => createDoctor(req))
     }
 
     static getMyDoctorsByClinic(req: Request, res: Response) {
-        this.handle(res, () => getMyDoctors(req))
+        doctorController.handle(res, () => getMyDoctors(req))
     }
     static getDoctorById(req: Request, res: Response) {
-        this.handle<Doctor | null>(res, () => getDoctorById(req))
+        doctorController.handle<Doctor | null>(res, () => getDoctorById(req))
     }
     static update(req: Request, res: Response) {
-        this.handle<Doctor>(res, () => updateDoctor(req))
+        doctorController.handle<Doctor>(res, () => updateDoctor(req))
     }
     static changeStatus(req: Request, res: Response) {
-        this.handle<Doctor>(res, () => changeDoctorStatus(req))
+        doctorController.handle<Doctor>(res, () => changeDoctorStatus(req))
     }
     static delete(req: Request, res: Response) {
-        this.handle<Doctor>(res, () => deleteDoctor(req))
+        doctorController.handle<Doctor>(res, () => deleteDoctor(req))
     }
 
 
@@ -31,26 +31,26 @@ class doctorController extends BaseController {
         const { id } = req.params
         const { date, serviceId } = req.query
 
-        return this.handle(res, () =>
+        return doctorController.handle(res, () =>
             getDoctorAvailability(Number(id), String(date), Number(serviceId))
         )
     }
 
     //#region Schedules
     static createSchedule(req: Request, res: Response) {
-        this.handle<DoctorSchedule>(res, () => createScheduleDoctor(req))
+        doctorController.handle<DoctorSchedule>(res, () => createScheduleDoctor(req))
     }
 
     static getSchedulesByDoctor(req: Request, res: Response) {
-        this.handle(res, () => getSchedulesByDoctorId(req))
+        doctorController.handle(res, () => getSchedulesByDoctorId(req))
     }
 
     static replaceSchedules(req: Request, res: Response) {
-        this.handle(res, () => replaceDoctorSchedules(req))
+        doctorController.handle(res, () => replaceDoctorSchedules(req))
     }
 
     static deleteSchedules(req: Request, res: Response) {
-        this.handle(res, () => deleteDoctorSchedule(req))
+        doctorController.handle(res, () => deleteDoctorSchedule(req))
     }
 }
 

@@ -8,7 +8,7 @@ import { useParams } from "react-router";
 
 const ClinicView = () => {
   const { slug } = useParams();
-  const { getClinicBySlug, clinic } = useClinic();
+  const { getClinicBySlug, clinic } = useClinic({ fetchData: false });
   const user = useUserStore((set) => set.user);
   useEffect(() => {
     getClinicBySlug(slug ?? "");

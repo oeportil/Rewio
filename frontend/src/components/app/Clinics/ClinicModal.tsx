@@ -22,9 +22,13 @@ const ClinicModal = ({
   setEditingClinic: (v: IClinic | null) => void;
 }) => {
   const { close } = useModal();
-  const { owners } = useUser();
+  const { values: owners, handlePagination } = useUser({
+    fetchData: true,
+    type: "all",
+  });
 
   useEffect(() => {
+    handlePagination({ page: 1, limit: 100, search: "" });
     const clear = (id: string) => {
       const el = document.getElementById(id) as HTMLInputElement;
       if (el) el.value = "";

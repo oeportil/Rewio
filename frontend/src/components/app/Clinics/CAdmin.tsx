@@ -15,7 +15,7 @@ const CAdmin = () => {
     openEdit,
     editingClinic,
     setEditingClinic,
-  } = useClinic(true);
+  } = useClinic({ fetchData: true });
   return (
     <ModulesLayout title="Clinicas">
       {contextHolder}

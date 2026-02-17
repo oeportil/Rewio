@@ -2,6 +2,7 @@ import { useService } from "@/hooks/Module/useService";
 import { motion } from "framer-motion";
 import ServiceModal from "./ServiceModal";
 import DeleteServiceModal from "./DeleteServiceModal";
+import PaginationData from "@/components/shared/PaginationData";
 
 const CRUDServices = ({ clinicId }: { clinicId: number }) => {
   const {
@@ -14,6 +15,8 @@ const CRUDServices = ({ clinicId }: { clinicId: number }) => {
     deleteService,
     openDelete,
     delService,
+    pag,
+    handlePagination,
   } = useService(clinicId);
 
   return (
@@ -24,7 +27,7 @@ const CRUDServices = ({ clinicId }: { clinicId: number }) => {
       className="mt-4 bg-white p-6 rounded-2xl shadow-md w-full"
     >
       {contextHolder}
-      <div className="flex justify-between items-center mb-6 w-full">
+      <div className="md:flex md:space-y-0 space-y-1 justify-between items-center mb-6 w-full">
         <h2 className="text-lg font-bold text-slate-900">
           🛠 Servicios de la Clínica
         </h2>
@@ -72,6 +75,12 @@ const CRUDServices = ({ clinicId }: { clinicId: number }) => {
             </div>
           </div>
         ))}
+        <PaginationData
+          current={pag.page}
+          total={pag.total!}
+          pag={pag}
+          onshowsizechange={handlePagination}
+        />
       </div>
     </motion.div>
   );

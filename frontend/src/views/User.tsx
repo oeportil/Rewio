@@ -23,7 +23,9 @@ const UserProfile = () => {
     contextHolder,
     saveUser,
     setEditingUser,
-  } = useUser(false);
+  } = useUser({
+    fetchData: false,
+  });
 
   const [form, setForm] = useState({
     name: user?.name ?? "",

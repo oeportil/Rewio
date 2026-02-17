@@ -24,6 +24,7 @@ type FormInputProps = {
   pattern?: string;
   id?: string;
   accept?: string;
+  defaultValue?: string;
 };
 
 export default function FormInput({
@@ -47,6 +48,7 @@ export default function FormInput({
   InputClassName,
   id,
   accept,
+  defaultValue,
 }: FormInputProps) {
   return (
     <div
@@ -75,6 +77,7 @@ export default function FormInput({
         maxLength={maxLength}
         pattern={pattern}
         accept={accept}
+        defaultValue={defaultValue}
       />
     </div>
   );
