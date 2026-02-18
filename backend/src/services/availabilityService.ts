@@ -93,7 +93,7 @@ export const getDoctorScheduleByServAndDate = async (
 
     const weekday = date.getDay()
 
-    // 1️⃣ Horarios base del doctor
+    //Horarios base del doctor
     const schedules = await prisma.doctorSchedule.findMany({
         where: {
             doctorId,
@@ -103,7 +103,7 @@ export const getDoctorScheduleByServAndDate = async (
 
     if (schedules.length === 0) return []
 
-    // 2️⃣ Duración del servicio
+    // Duración del servicio
     const service = await prisma.service.findUnique({
         where: { id: serviceId },
         select: { duration: true }
@@ -112,7 +112,7 @@ export const getDoctorScheduleByServAndDate = async (
 
     const duration = service.duration
 
-    // 3️⃣ Citas ya existentes
+    // Citas ya existentes
     const appointments = await prisma.appointment.findMany({
         where: {
             doctorId,
@@ -125,7 +125,7 @@ export const getDoctorScheduleByServAndDate = async (
         }
     })
 
-    // 4️⃣ Bloqueos del doctor
+    // Bloqueos del doctor
     const blocks = await prisma.doctorBlock.findMany({
         where: {
             doctorId,
@@ -133,7 +133,7 @@ export const getDoctorScheduleByServAndDate = async (
         }
     })
 
-    // 5️⃣ Vacaciones del doctor
+    // Vacaciones del doctor
     const vacations = await prisma.doctorVacation.findMany({
         where: {
             doctorId,
@@ -152,7 +152,7 @@ export const getDoctorScheduleByServAndDate = async (
 
     const availableSlots: string[] = []
 
-    // 6️⃣ Generar slots reales
+
     for (const s of schedules) {
         let current = s.startTime
 

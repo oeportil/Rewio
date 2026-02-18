@@ -146,8 +146,8 @@ const Owner = ({ clinic }: Props) => {
       {/* Doctors + Appointments */}
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Doctors Section */}
-        {clinic && <DoctorSection clinicId={clinic.id} />}
-        {/* Appointments Section */}
+        {clinic && clinic.id != 0 && <DoctorSection clinicId={clinic.id} />}
+        {/* Appointments Section (colocarlo en un componente aparte) */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}

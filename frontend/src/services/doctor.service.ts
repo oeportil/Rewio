@@ -9,22 +9,25 @@ export const getApiMyDoctors = async ({ page, limit, search, errorfun }: apiTpag
     return getBase({ page, limit, search, errorfun }, `/doctor/${id}`);
 }
 
-export const getApisClinicOwners = async ({ page, limit, search, errorfun }: apiTpag) => {
-    return getBase({ page, limit, search, errorfun }, "/user/owners");
+export const createApiDoctor = async ({ data, errorfun }: apiTpost) => {
+    return postBase({ data, errorfun }, "/doctor");
 }
 
-export const createApiUser = async ({ data, errorfun }: apiTpost) => {
-    return postBase({ data, errorfun }, "/user");
+export const updateApiDoctor = async ({ data, errorfun, id }: apiTpatchAndPut, idClinic: number) => {
+    return patchBase({ data, errorfun, id }, `/doctor/${idClinic}`);
 }
+
+
+export const getApiDoctorById = async (idClinic: number, idDoctor: number) => {
+    return getBase({ page: 1, limit: 1, search: "", errorfun: () => { } }, `/doctor/${idClinic}/${idDoctor}`);
+}
+
 
 export const changePassApiUser = async ({ data, errorfun }: apiTpatchAndPut) => {
     return putBase({ data, errorfun }, "/user/password-me");
 }
 
 
-export const updateApiUser = async ({ data, errorfun, id }: apiTpatchAndPut) => {
-    return patchBase({ data, errorfun, id }, "/user/me");
-}
 
 export const deleteApiUser = async ({ errorfun, id }: apiTdelete) => {
     return deleteBase({ id, errorfun }, "/user");

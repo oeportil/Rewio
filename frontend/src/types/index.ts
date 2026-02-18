@@ -116,4 +116,14 @@ export interface IUser {
     updatedAt: string
 }
 
+export interface IDoctor {
+    id: number,
+    active: boolean,
+    color: string,
+    createdAt: string,
+    specialty: string
+    updatedAt: string,
+    user: IUser,
+    userId: number
+}
 

@@ -7,6 +7,7 @@ import Clinics from "./views/Clinics";
 import Register from "./views/Register";
 import ClinicView from "./views/ClinicView";
 import User from "./views/User";
+import DoctorView from "./views/DoctorView";
 
 const Router = () => {
   return (
@@ -21,6 +22,10 @@ const Router = () => {
             <Route path="clinics" element={<Clinics />} />
             <Route path="user/:user" element={<User />} />
             <Route path="clinics/:slug" element={<ClinicView />} />
+            <Route
+              path="clinics/:slug/:doctorId/:clinicId/doctor"
+              element={<DoctorView />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>

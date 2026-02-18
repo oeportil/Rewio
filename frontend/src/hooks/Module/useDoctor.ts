@@ -1,31 +1,30 @@
 import { useEffect, useState, type FormEvent } from "react";
-import type { apiTpag, IUser, Tpagination } from "@/types/index";
+import type { apiTpag, IDoctor, IUser, Tpagination } from "@/types/index";
 import usePagination from "../logic/usePagination";
 import useNotification from "../logic/useNotification";
 import useModal from "@/store/useModal";
-import { updateApiUser, createApiUser, deleteApiUser, changePassApiUser } from "@/services/user.service";
+import { deleteApiUser } from "@/services/user.service";
 import useStoreAuth from "@/store/useStoreAuth";
 import { useUserStore } from "@/store/useUserStore";
-import { getApiDoctors, getApiMyDoctors } from "@/services/doctor.service";
+import { createApiDoctor, getApiDoctorById, getApiDoctors, getApiMyDoctors, updateApiDoctor } from "@/services/doctor.service";
 import { formDataKeysAndValues } from "@/utils/index";
 
 
 const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: boolean, type?: 'owners' | 'all', clinicId?: number }) => {
     const { contextHolder, showNotification } = useNotification()
-    const { pagfunc, values, pagination, handlePag } = usePagination<IUser>("data");
+    const { pagfunc, values, pagination, handlePag } = usePagination<IUser | IDoctor>("data");
     const { close, open } = useModal();
     const [editingDoctor, setEditingDoctor] = useState<IUser | null>(null);
     const closeSesion = useStoreAuth((set) => set.clearToken);
     const { updateStore } = useUserStore();
-    const [chPass, setChPass] = useState<{
-        oldPass: string,
-        newPass: string,
-        newPass2: string
-    }>({
-        oldPass: "",
-        newPass: "",
-        newPass2: ""
+    const [userId, setUserId] = useState<number>(0);
+    const [doctor, setDoctor] = useState<IDoctor | null>(null);
+    const [form, setForm] = useState({
+        specialty: "",
+        color: "#0ea5e9",
     });
+
+
 
     const [pag, setPag] = useState<apiTpag>({
         errorfun: showNotification,
@@ -35,8 +34,6 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
         total: 0
     });
 
-
-
     const getDoctors = async () => {
         //ojo, "all" es para un fetch en entidad user para mapearlos en el select al crear un doctor, 
         // y "owners" es un fetch a la entidad doctor para mostrar los doctores de cada una de las clinicas
@@ -44,13 +41,13 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
         pagfunc(response.value)
     }
 
-    const changePassword = async () => {
-        if (chPass.newPass != chPass.newPass2) return showNotification({ type: "warning", content: "Las contraseñas deben de ser las mismas" });
-        const { oldPass, newPass } = chPass
-        const response = await changePassApiUser({ errorfun: showNotification, data: { oldPass, newPass } });
-        if (response && response.status) showNotification({ type: "success", content: "Contraseña modificada correctamente" });
+    const getDoctorByClinicAndId = async (doctorId: number) => {
+        const response = await getApiDoctorById(clinicId!, doctorId)
+        if (response && response.status) {
+            setDoctor(response.value)
+            setForm({ color: response.value.color, specialty: response.value.specialty })
+        }
         else showNotification({ type: "error", content: response.msg });
-        return
     }
 
     const disableUser = async () => {
@@ -65,18 +62,15 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
     const saveDoctor = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        if (!formData.get("name")) return showNotification({ type: "warning", content: "El nombre es obligatorio" });
         const data = formDataKeysAndValues(e)
-
-
+        console.log(clinicId)
         // edit or create
         const response = editingDoctor
-            ? await updateApiUser({ data, errorfun: showNotification, id: editingDoctor.id })
-            : await createApiUser({ data, errorfun: showNotification });
+            ? await updateApiDoctor({ data, errorfun: showNotification, id: editingDoctor.id }, clinicId!)
+            : await createApiDoctor({ data: { ...data, clinicId, userId }, errorfun: showNotification });
         //success or not
         if (response && response.status) {
-            showNotification({ type: "success", content: `Usuario ${editingDoctor ? "actualizado" : "creado"} correctamente` });
+            showNotification({ type: "success", content: `Doctor ${editingDoctor ? "actualizado" : "creado"} correctamente` });
             close("doctorModal");
             if (fetchData) getDoctors();
             else updateStore(response.value);
@@ -111,9 +105,11 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
         editingDoctor,
         setEditingDoctor,
         disableUser,
-        setChPass,
-        chPass,
-        changePassword
+        setUserId,
+        doctor,
+        getDoctorByClinicAndId,
+        form,
+        setForm
     }
 }
 

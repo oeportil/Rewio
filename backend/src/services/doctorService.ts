@@ -11,7 +11,7 @@ const findMyClinic = async (id: number, clinicId: number): Promise<Boolean> => {
 
 export const createDoctor = async (req: Request) => {
     const obj = getUserByToken(req);
-    const { doctor }: { doctor: Doctor } = req.body
+    const doctor: Doctor = req.body
     //ver si la clinica existe o es propietario
     if (!findMyClinic(obj.id, doctor.clinicId)) throw new Error("La clinica no existe o no eres propietario")
 
@@ -20,10 +20,35 @@ export const createDoctor = async (req: Request) => {
     const foundUser = await prisma.user.count({ where: { id: doctor.userId } })
     if (foundUser <= 0) throw new Error("El usuario seleccionado no existe")
 
-    //crear el doctor CORRESPONDIENTE A LA CLINICA en la siguiente linea
-    const newDoctor = await prisma.doctor.create({ data: doctor })
-    if (!newDoctor) throw new Error(UNEXPECTED_ERROR)
-    return newDoctor
+    try {
+        const newDoctor = await prisma.doctor.create({
+            data: doctor
+        })
+
+        if (!newDoctor) throw new Error(UNEXPECTED_ERROR)
+
+        return newDoctor
+
+    } catch (error: any) {
+
+        // Prisma UNIQUE constraint
+        if (error.code === "P2002") {
+            const field = error.meta?.target?.[0]
+
+            if (field === "email") {
+                throw new Error("Ya existe un doctor con este correo en tu clinica")
+            }
+
+            if (field === "dui") {
+                throw new Error("Ya existe un doctor con este DUI en tu clinica")
+            }
+
+            throw new Error("Este doctor ya existe en tu clinica")
+        }
+
+        // Otros errores reales
+        throw error
+    }
 }
 
 export const getMyDoctors = async (req: Request) => {
@@ -41,6 +66,9 @@ export const getMyDoctors = async (req: Request) => {
         filters: {
             status: req.query.status,
             clinicId: +clinicId
+        },
+        include: {
+            user: true
         }
     })
 }
@@ -50,7 +78,11 @@ export const getDoctorById = async (req: Request) => {
     const { clinicId, doctorId } = req.params
     //buscar la clinica
     if (!findMyClinic(obj.id, +clinicId)) throw new Error("La clinica no existe o no eres propietario")
-    const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
+    const foundDoctor = await prisma.doctor.findFirst({
+        where: { id: +doctorId, clinicId: +clinicId }, include: {
+            user: true
+        }
+    });
 
     //retornar el doctor
     if (!foundDoctor) throw new Error("Doctor no encontrado");
@@ -58,11 +90,11 @@ export const getDoctorById = async (req: Request) => {
 }
 export const updateDoctor = async (req: Request) => {
     const obj = getUserByToken(req);
-    const { clinicId } = req.params
+    const { clinicId, doctorId } = req.params
     const { doctor }: { doctor: Doctor } = req.body
     //buscar la clinica
     if (!findMyClinic(obj.id, +clinicId)) throw new Error("La clinica no existe o no eres propietario")
-    const foundDoctor = await prisma.doctor.findFirst({ where: { id: doctor.id, clinicId: +clinicId } });
+    const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
 
     //actualizar el doctor
     if (!foundDoctor) throw new Error("Doctor no encontrado");
@@ -70,7 +102,7 @@ export const updateDoctor = async (req: Request) => {
         specialty: doctor.specialty,
         color: doctor.color,
     }
-    const updatedDoctor = await prisma.doctor.update({ where: { id: doctor.id, clinicId: +clinicId }, data: objUp })
+    const updatedDoctor = await prisma.doctor.update({ where: { id: +doctorId, clinicId: +clinicId }, data: objUp })
     if (!updatedDoctor) throw new Error(UNEXPECTED_ERROR);
 
     //retornar Doctor Actualizado

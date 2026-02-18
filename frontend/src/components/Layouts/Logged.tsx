@@ -26,7 +26,7 @@ const Logged = () => {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <SideBar />
-      <div className="p-4 w-full">
+      <div className="p-4 w-full overflow-y-auto h-screen">
         <div className="flex justify-end">
           <p className="text-sm font-bold text-sky-900">{user?.email}</p>
         </div>

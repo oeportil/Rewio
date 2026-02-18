@@ -9,7 +9,7 @@ router.post('/', doctorController.create)
 router.get('/:clinicId', doctorController.getMyDoctorsByClinic)
 router.get('/:id/availability', doctorController.availability)
 router.get('/:clinicId/:doctorId', doctorController.getDoctorById)
-router.patch('/:clinicId', doctorController.update)
+router.patch('/:clinicId/:doctorId', doctorController.update)
 router.put('/:clinicId', doctorController.changeStatus)
 router.delete('/:clinicId/:doctorId', doctorController.delete)
 
