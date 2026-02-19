@@ -2,17 +2,24 @@ import { motion } from "framer-motion";
 import useDoctor from "@/hooks/Module/useDoctor";
 import { useEffect } from "react";
 import { useParams } from "react-router";
-import FormButton from "@/components/shared/forms/FormButton";
 import Configuration from "@/components/app/DoctorView/Configuration";
+import BlocksAndVacations from "@/components/app/DoctorView/BlocksAndVacations";
+import DoctorSchedules from "@/components/app/DoctorView/DoctorSchedules";
 
 const DoctorView = () => {
   const { doctorId, clinicId } = useParams();
 
-  const { doctor, contextHolder, getDoctorByClinicAndId, form, setForm } =
-    useDoctor({
-      fetchData: false,
-      clinicId: clinicId ? +clinicId : 0,
-    });
+  const {
+    doctor,
+    contextHolder,
+    getDoctorByClinicAndId,
+    form,
+    setForm,
+    updateDoctor,
+  } = useDoctor({
+    fetchData: false,
+    clinicId: clinicId ? +clinicId : 0,
+  });
 
   useEffect(() => {
     if (doctorId && clinicId) {
@@ -27,7 +34,6 @@ const DoctorView = () => {
   return (
     <div className="p-8 bg-slate-50 min-h-screen space-y-10">
       {contextHolder}
-
       {/* HEADER */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -39,6 +45,7 @@ const DoctorView = () => {
             {doctor.user.name}
           </h1>
           <p className="text-sm text-slate-500">{doctor.user.email}</p>
+          <p className="text-sm text-slate-500">{doctor.user.dui}</p>
         </div>
 
         <span
@@ -48,50 +55,17 @@ const DoctorView = () => {
           {form.specialty}
         </span>
       </motion.div>
-
       {/* CONFIGURACIÓN */}
-      <Configuration form={form} setForm={setForm} />
-
+      <Configuration
+        form={form}
+        setForm={setForm}
+        id={doctor.id}
+        updateDoctor={updateDoctor}
+      />
       {/* HORARIOS */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-lg font-bold mb-6">🕒 Horarios Semanales</h2>
-
-        <div className="space-y-4">
-          {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((day) => (
-            <div
-              key={day}
-              className="flex justify-between items-center p-4 bg-slate-50 rounded-xl"
-            >
-              <span className="font-semibold">{day}</span>
-              <div className="flex gap-4">
-                <span>08:00 - 17:00</span>
-                <FormButton
-                  type="button"
-                  className="text-sky-600 text-sm font-semibold hover:underline"
-                >
-                  Editar
-                </FormButton>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      <DoctorSchedules idDoctor={doctor.id} />
       {/* BLOQUEOS / VACACIONES */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-lg font-bold mb-6">🚫 Bloqueos y Vacaciones</h2>
-
-        <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition cursor-pointer">
-          + Agregar
-        </button>
-
-        <div className="mt-4 space-y-3">
-          <div className="p-3 bg-red-50 rounded-lg border border-red-200">
-            20 Feb 2026 - Vacaciones
-          </div>
-        </div>
-      </div>
-
+      <BlocksAndVacations idDoctor={doctor.id} />
       {/* AGENDA */}
       <div className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-lg font-bold mb-6">📅 Agenda del Doctor</h2>

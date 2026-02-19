@@ -91,7 +91,7 @@ export const getDoctorById = async (req: Request) => {
 export const updateDoctor = async (req: Request) => {
     const obj = getUserByToken(req);
     const { clinicId, doctorId } = req.params
-    const { doctor }: { doctor: Doctor } = req.body
+    const doctor: Doctor = req.body
     //buscar la clinica
     if (!findMyClinic(obj.id, +clinicId)) throw new Error("La clinica no existe o no eres propietario")
     const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });

@@ -1,10 +1,10 @@
 import { Router } from "express";
 import patientController from "../controllers/patientController";
-import { authMiddleware } from "../middlewares";
+import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const router = Router();
 router.use(authMiddleware)
-router.post('/', patientController.create);
+router.post('/', idempotencyMiddleware, patientController.create);
 router.get('/', patientController.getByClinic);
 router.get('/:id', patientController.getById);
 router.patch('/:id', patientController.update);

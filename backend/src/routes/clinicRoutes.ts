@@ -1,11 +1,11 @@
 import { Router } from "express";
 import clinicController from "../controllers/clinicController";
-import { authMiddleware } from "../middlewares";
+import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const router = Router();
 
 router.use(authMiddleware)
-router.post('/', clinicController.create)
+router.post('/', idempotencyMiddleware, clinicController.create)
 router.get('/', clinicController.getAll)
 router.get('/owner', clinicController.getMyClinics)
 router.get('/my-clinic', clinicController.getMyClinic)

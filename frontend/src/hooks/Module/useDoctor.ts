@@ -13,8 +13,7 @@ import { formDataKeysAndValues } from "@/utils/index";
 const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: boolean, type?: 'owners' | 'all', clinicId?: number }) => {
     const { contextHolder, showNotification } = useNotification()
     const { pagfunc, values, pagination, handlePag } = usePagination<IUser | IDoctor>("data");
-    const { close, open } = useModal();
-    const [editingDoctor, setEditingDoctor] = useState<IUser | null>(null);
+    const { close } = useModal();
     const closeSesion = useStoreAuth((set) => set.clearToken);
     const { updateStore } = useUserStore();
     const [userId, setUserId] = useState<number>(0);
@@ -59,28 +58,30 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
         else showNotification({ type: "error", content: response.msg });
     }
 
+    const updateDoctor = async (id: number) => {
+        if (!form.color || !form.specialty) showNotification({ type: "warning", content: "Faltan campos necesarios" });
+        const response = await updateApiDoctor({ data: form, errorfun: showNotification, id }, +clinicId!)
+        if (response && response.status) {
+            showNotification({ type: "success", content: "Doctor Actualizado Correctamente" });
+        }
+        else showNotification({ type: "error", content: response.msg });
+    }
+
     const saveDoctor = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();
         const data = formDataKeysAndValues(e)
-        console.log(clinicId)
         // edit or create
-        const response = editingDoctor
-            ? await updateApiDoctor({ data, errorfun: showNotification, id: editingDoctor.id }, clinicId!)
-            : await createApiDoctor({ data: { ...data, clinicId, userId }, errorfun: showNotification });
+        const response = await createApiDoctor({ data: { ...data, clinicId, userId }, errorfun: showNotification });
         //success or not
         if (response && response.status) {
-            showNotification({ type: "success", content: `Doctor ${editingDoctor ? "actualizado" : "creado"} correctamente` });
+            showNotification({ type: "success", content: `Doctor creado correctamente` });
             close("doctorModal");
             if (fetchData) getDoctors();
             else updateStore(response.value);
         } else {
             showNotification({ type: "error", content: response.msg });
         }
-    }
-    const openEdit = (clinic: IUser) => {
-        setEditingDoctor(clinic);
-        open("doctorModal");
     }
 
     const handlePagination = (values: Tpagination) => {
@@ -101,15 +102,13 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
         handlePagination,
         pag,
         saveDoctor,
-        openEdit,
-        editingDoctor,
-        setEditingDoctor,
         disableUser,
         setUserId,
         doctor,
         getDoctorByClinicAndId,
         form,
-        setForm
+        setForm,
+        updateDoctor
     }
 }
 

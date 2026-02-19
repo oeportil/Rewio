@@ -58,15 +58,14 @@ const useUser = ({ fetchData = true, type = 'all' }: { fetchData: boolean, type?
         else showNotification({ type: "error", content: response.msg });
     }
 
-    const saveUser = async ({ e, name, email, id = undefined }: { e?: FormEvent<HTMLFormElement>, name?: string, email?: string, id?: number }) => {
+    const saveUser = async ({ e, name, email, id = undefined, dui }: { e?: FormEvent<HTMLFormElement>, name?: string, email?: string, id?: number, dui?: string }) => {
         let data
         if (e) {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
             if (!formData.get("name")) return showNotification({ type: "warning", content: "El nombre es obligatorio" });
             data = formData
-        } else data = { name, email }
-
+        } else data = { name, email, dui }
         // edit or create
         const response = editingUser
             ? await updateApiUser({ data, errorfun: showNotification, id })

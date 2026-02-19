@@ -64,7 +64,7 @@ const DoctorModal = ({ clinicId }: { clinicId: number }) => {
                 const user = d as IUser;
                 return {
                   id: user.id,
-                  label: user.name,
+                  label: `${user.name} - ${user.dui}`,
                   value: `${user.id}`,
                 };
               })}

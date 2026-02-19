@@ -1,3 +1,5 @@
+import type { TimeRangePickerProps } from "antd";
+import dayjs from "dayjs";
 
 export const classesNavbarLinks = `relative inline-block
 cursor-pointer
@@ -45,3 +47,10 @@ export const roleLabels: Record<string, string> = {
     patient: "Paciente",
     clinic: "Propietario",
 };
+
+export const rangePresets: TimeRangePickerProps["presets"] = [
+    { label: "7 Dias", value: [dayjs().add(7, "d"), dayjs()] },
+    { label: "14 Dias", value: [dayjs().add(14, "d"), dayjs()] },
+    { label: "30 Dias", value: [dayjs().add(30, "d"), dayjs()] },
+    { label: "90 Dias", value: [dayjs().add(90, "d"), dayjs()] },
+];

@@ -1,8 +1,8 @@
 import { Router } from "express";
 import reminderController from "../controllers/reminderController";
-import { authMiddleware } from "../middlewares";
+import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const router = Router();
 router.use(authMiddleware)
-router.post("/send", reminderController.send);
+router.post("/send", idempotencyMiddleware, reminderController.send);
 export default router;

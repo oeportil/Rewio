@@ -7,11 +7,13 @@ import {
   FaUserShield,
   FaEdit,
   FaSave,
+  FaRegIdCard,
 } from "react-icons/fa";
 import { roleLabels } from "../consts";
 import Password from "@/components/app/User/Password";
 import DangerZone from "@/components/app/User/DangerZone";
 import useUser from "@/hooks/Module/useUser";
+import { TbStatusChange } from "react-icons/tb";
 
 const UserProfile = () => {
   const user = useUserStore((s) => s.user);
@@ -30,6 +32,7 @@ const UserProfile = () => {
   const [form, setForm] = useState({
     name: user?.name ?? "",
     email: user?.email ?? "",
+    dui: user?.dui ?? "",
   });
   useEffect(() => {
     setEditingUser(user);
@@ -99,6 +102,21 @@ const UserProfile = () => {
             )}
           </div>
 
+          <div>
+            <label className="text-xs text-zinc-500 flex items-center gap-2">
+              <FaRegIdCard /> Dui
+            </label>
+            {editing ? (
+              <input
+                value={form.dui}
+                onChange={(e) => setForm({ ...form, dui: e.target.value })}
+                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+              />
+            ) : (
+              <p className="mt-1 text-sm text-zinc-800">{user.dui ?? "N/A"}</p>
+            )}
+          </div>
+
           {/* Role */}
           <div>
             <label className="text-xs text-zinc-500 flex items-center gap-2">
@@ -111,7 +129,7 @@ const UserProfile = () => {
 
           <div>
             <label className="text-xs text-zinc-500 flex items-center gap-2">
-              <FaUserShield /> Status
+              <TbStatusChange /> Status
             </label>
             <p
               className={` mt-1 text-xs text-white w-fit p-1 rounded-full px-2 ${
@@ -127,7 +145,7 @@ const UserProfile = () => {
           <div className="flex justify-end">
             <button
               onClick={() => {
-                saveUser({ name: form.name, email: form.email });
+                saveUser({ name: form.name, email: form.email, dui: form.dui });
               }}
               className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 cursor-pointer"
             >

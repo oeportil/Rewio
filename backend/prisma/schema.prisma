@@ -15,16 +15,16 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      userRole
-  status    Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  logicDel  Boolean  @default(false)
-
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String       @unique
+  password     String
+  role         userRole
+  dui          String?
+  status       Boolean
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  logicDel     Boolean      @default(false)
   clinicsOwned Clinic[]
   doctor       Doctor?
   patient      Patient?
@@ -198,8 +198,7 @@ model DoctorVacation {
   startDate DateTime
   endDate   DateTime
   reason    String?
-
-  doctor Doctor @relation(fields: [doctorId], references: [id])
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
 }
 
 model AppointmentReschedule {
@@ -231,6 +230,16 @@ enum ReminderChannel {
   email
   sms
   whatsapp
+}
+
+//para idempotencia en backend, OJO siempre es de implementar los loaders en el frontend pero esto
+//agrega una capa mas de seguridad para evitar las cosas repetidas en los post
+model IdempotencyKey {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  response    Json
+  status_code Int
+  createdAt   DateTime @default(now())
 }
 
 // MedicalRecord model is commented, but you can implement it later on fase 2 :) niiiggaaaa

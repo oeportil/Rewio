@@ -6,10 +6,12 @@ type Prop = {
     specialty: string;
     color: string;
   };
+  updateDoctor: (id: number) => void;
+  id: number;
   setForm: (v: { specialty: string; color: string }) => void;
 };
 
-const Configuration = ({ form, setForm }: Prop) => {
+const Configuration = ({ form, setForm, id, updateDoctor }: Prop) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -48,7 +50,7 @@ const Configuration = ({ form, setForm }: Prop) => {
       </div>
 
       <div className="flex justify-end mt-6">
-        <FormButton type="button" woback={false}>
+        <FormButton type="button" woback={false} click={() => updateDoctor(id)}>
           Guardar Cambios
         </FormButton>
       </div>

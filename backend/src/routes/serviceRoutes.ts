@@ -1,10 +1,10 @@
 import { Router } from "express";
 import serviceController from "../controllers/serviceController";
-import { authMiddleware } from "../middlewares";
+import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const router = Router();
 router.use(authMiddleware)
-router.post("/", serviceController.create);
+router.post("/", idempotencyMiddleware, serviceController.create);
 router.get("/:id", serviceController.getByClinic);
 router.put("/:id", serviceController.update);
 router.delete("/:id", serviceController.delete);

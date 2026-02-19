@@ -114,6 +114,7 @@ export interface IUser {
     status: boolean
     createdAt: string
     updatedAt: string
+    dui: string | null
 }
 
 export interface IDoctor {

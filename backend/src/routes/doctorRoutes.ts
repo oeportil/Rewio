@@ -1,11 +1,11 @@
 import { Router } from "express";
 import doctorController from "../controllers/doctorController";
-import { authMiddleware } from "../middlewares";
+import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const router = Router();
 
 router.use(authMiddleware)
-router.post('/', doctorController.create)
+router.post('/', idempotencyMiddleware, doctorController.create)
 router.get('/:clinicId', doctorController.getMyDoctorsByClinic)
 router.get('/:id/availability', doctorController.availability)
 router.get('/:clinicId/:doctorId', doctorController.getDoctorById)
@@ -16,10 +16,10 @@ router.delete('/:clinicId/:doctorId', doctorController.delete)
 
 router.use('/schedules', (() => {
     const sche = Router()
-    sche.post('/:clinicId/:doctorId', doctorController.createSchedule)
+    sche.post('/:clinicId/:doctorId', idempotencyMiddleware, doctorController.createSchedule)
     sche.get('/:clinicId/:doctorId', doctorController.getSchedulesByDoctor)
     sche.put('/:clinicId/:doctorId', doctorController.replaceSchedules)
-    sche.post('/:id', doctorController.deleteSchedules)
+    sche.post('/:id', idempotencyMiddleware, doctorController.deleteSchedules)
     return sche
 })())
 

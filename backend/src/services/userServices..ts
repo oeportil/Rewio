@@ -74,7 +74,8 @@ export const getMe = async (req: Request) => {
             email: true,
             role: true,
             status: true,
-            createdAt: true
+            createdAt: true,
+            dui: true
         }
     })
 
@@ -83,7 +84,7 @@ export const getMe = async (req: Request) => {
 }
 
 export const updateMe = async (req: Request) => {
-    const { name, email } = req.body
+    const { name, email, dui } = req.body
     const { id } = getUserByToken(req);
     const exists = await prisma.user.findFirst({
         where: {
@@ -97,7 +98,7 @@ export const updateMe = async (req: Request) => {
 
     const updated = await prisma.user.update({
         where: { id: id },
-        data: { name, email }
+        data: { name, email, dui }
     })
 
     if (!updated) throw new Error(UNEXPECTED_ERROR)
@@ -129,7 +130,7 @@ export const getAllUsers = async (req: Request) => {
         page: Number(req.query.page),
         limit: Number(req.query.limit),
         search: req.query.search as string,
-        searchFields: ["name", "email"],
+        searchFields: ["name", "email", "dui"],
         filters: {
             status: req.query.status,
             logicDel: false
@@ -144,7 +145,7 @@ export const getAllDoctors = async (req: Request) => {
         page: Number(req.query.page),
         limit: Number(req.query.limit),
         search: req.query.search as string,
-        searchFields: ["name", "email"],
+        searchFields: ["name", "email", "dui"],
         filters: {
             status: req.query.status,
             logicDel: false,

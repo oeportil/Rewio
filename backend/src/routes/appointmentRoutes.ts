@@ -1,11 +1,11 @@
 import { Router } from "express";
 import appointmentController from "../controllers/appointmentController";
-import { authMiddleware } from "../middlewares";
+import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const router = Router();
 
 router.use(authMiddleware)
-router.post('/', appointmentController.create);
+router.post('/', idempotencyMiddleware, appointmentController.create);
 router.get('/my', appointmentController.myAppointments);
 router.get('/:id/doctor', appointmentController.getDoctorAppointments);
 router.get('/:id/clinic', appointmentController.getClinicAppointments);

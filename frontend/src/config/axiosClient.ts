@@ -12,6 +12,12 @@ instance.interceptors.request.use((config) => {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
     }
+
+    if (config.method?.toUpperCase() === "POST") {
+        config.headers = config.headers || {};
+        config.headers["Idempotency-Key"] = crypto.randomUUID();
+    }
+
     return config;
 });
 

@@ -6,28 +6,14 @@ import useNotification from "../logic/useNotification";
 import useModal from "@/store/useModal";
 import { formDataKeysAndValues } from "@/utils/index";
 
-const InitValue: IClinic = {
-    address: "",
-    createdAt: "",
-    email: "",
-    id: 0,
-    logo: "",
-    name: "",
-    ownerId: 0,
-    phone: "",
-    status: false,
-    slug: "",
-    updatedAt: "",
-    owner: { email: "", id: 0, name: "", createdAt: "", role: "", status: false, updatedAt: "", dui: "" }
-}
 
-const useClinic = ({ fetchData = false, own = false }: { fetchData: boolean, own?: boolean }) => {
+const useSchedule = ({ fetchData = false, own = false }: { fetchData: boolean, own?: boolean }) => {
     const { contextHolder, showNotification } = useNotification()
     const { pagfunc, values, pagination, handlePag } = usePagination<IClinic>("data");
     const { close, open } = useModal();
     const [editingClinic, setEditingClinic] = useState<IClinic | null>(null);
     const [imageBase64, setImageBase64] = useState<string>("");
-    const [clinic, setClinic] = useState<IClinic>(InitValue);
+    const [clinic, setClinic] = useState<IClinic>();
 
     const [pag, setPag] = useState<apiTpag>({
         errorfun: showNotification,
@@ -55,8 +41,7 @@ const useClinic = ({ fetchData = false, own = false }: { fetchData: boolean, own
 
     const saveClinic = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // const formData = new FormData(e.currentTarget);
-        // if (!formData.get("name")) return showNotification({ type: "warning", content: "El nombre es obligatorio" });
+
         const data = formDataKeysAndValues(e);
 
         // edit or create
@@ -107,4 +92,4 @@ const useClinic = ({ fetchData = false, own = false }: { fetchData: boolean, own
     }
 }
 
-export default useClinic;
+export default useSchedule;

@@ -1,10 +1,10 @@
 import { Router } from "express";
 import userController from "../controllers/userController";
-import { AdminMiddleware, authMiddleware } from "../middlewares";
+import { AdminMiddleware, authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const route = Router();
-route.post('/login', userController.login);
-route.post('/save', userController.saveUser);
+route.post('/login', idempotencyMiddleware, userController.login);
+route.post('/save', idempotencyMiddleware, userController.saveUser);
 route.use(authMiddleware)
 route.get('/', userController.getAll);
 route.get('/doctors', userController.getAllDoctors);

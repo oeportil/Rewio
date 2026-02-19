@@ -9,15 +9,15 @@ import {
 class vacationController extends BaseController {
 
     static create(req: Request, res: Response) {
-        return this.handle(res, () => createVacation(req))
+        return vacationController.handle(res, () => createVacation(req))
     }
 
     static getByDoctor(req: Request, res: Response) {
-        return this.handle(res, () => getVacationsByDoctor(req))
+        return vacationController.handle(res, () => getVacationsByDoctor(req))
     }
 
     static delete(req: Request, res: Response) {
-        return this.handle(res, () => deleteVacation(req))
+        return vacationController.handle(res, () => deleteVacation(req))
     }
 
 }
