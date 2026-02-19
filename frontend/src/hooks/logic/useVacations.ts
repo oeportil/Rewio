@@ -3,7 +3,7 @@ import useNotification from "./useNotification";
 import useModal from "@/store/useModal";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { createApiVacation, getApiVacationsByDoctor } from "@/services/blockAndVacations.service";
+import { createApiVacation, deleteApiVacation, getApiVacationsByDoctor } from "@/services/blockAndVacations.service";
 import type { IVacations } from "@/types/index";
 import { formDataKeysAndValues } from "@/utils/index";
 
@@ -34,9 +34,9 @@ const useVacations = ({ fetchData = false, idDoctor }: { fetchData: boolean, own
         if (response && response.status) {
             showNotification({ type: "success", content: `Vacaciones agregadas correctamente` });
             close("vacations");
-            e.currentTarget.reset();
             setDates({ startDate: "", endDate: "" })
             if (fetchData) {
+                console.log("no traigo las cosas")
                 getVacations();
             }
         } else {
@@ -57,6 +57,17 @@ const useVacations = ({ fetchData = false, idDoctor }: { fetchData: boolean, own
         return current && current < dayjs().endOf("day");
     };
 
+
+    const deleteVacation = async (id: number) => {
+        const response = await deleteApiVacation({ id, errorfun: showNotification })
+        if (response && response.status) {
+            close("deleteService")
+            showNotification({ type: "success", content: `Vacación eliminada correctamente` });
+            getVacations();
+        } else {
+            showNotification({ type: "error", content: response.msg });
+        }
+    }
     const onRangeChange = (
         dates: null | (Dayjs | null)[],
         dateStrings: string[],
@@ -73,7 +84,8 @@ const useVacations = ({ fetchData = false, idDoctor }: { fetchData: boolean, own
         vacations,
         disabledDate,
         onRangeChange,
-        saveVacation
+        saveVacation,
+        deleteVacation
     }
 
 }

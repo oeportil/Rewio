@@ -10,6 +10,7 @@ import useVacations from "@/hooks/logic/useVacations";
 import { formatDate } from "@/utils/index";
 import useBlocks from "@/hooks/logic/useBlocks";
 import SearchInput from "@/components/shared/SearchInput";
+import { FaXmark } from "react-icons/fa6";
 
 type Prop = {
   idDoctor: number;
@@ -22,6 +23,7 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
     onRangeChange,
     saveVacation,
     contextHolder: chvac,
+    deleteVacation,
   } = useVacations({
     fetchData: true,
     idDoctor,
@@ -34,6 +36,7 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
     blocks,
     pag,
     handlePagination,
+    deleteBlock,
   } = useBlocks({
     fetchData: true,
     idDoctor,
@@ -102,6 +105,14 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
               {formatDate(v.startDate)} - {formatDate(v.endDate)}
             </p>{" "}
             <p>{v.reason}</p>
+            <div className="flex justify-end">
+              <button
+                className="cursor-pointer hover:text-sky-500"
+                onClick={() => deleteVacation(v.id)}
+              >
+                <FaXmark size={20} />
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -198,6 +209,14 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
               {b.startTime} - {b.endTime}
             </p>
             <p>{b.reason}</p>
+            <div className="flex justify-end">
+              <button
+                className="cursor-pointer hover:text-sky-500"
+                onClick={() => deleteBlock(b.id)}
+              >
+                <FaXmark size={20} />
+              </button>
+            </div>
           </div>
         ))}
       </div>

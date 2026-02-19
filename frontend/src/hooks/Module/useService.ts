@@ -73,6 +73,7 @@ export const useService = (clinicId: number) => {
 
     useEffect(() => {
         getServices();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 

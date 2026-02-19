@@ -3,7 +3,7 @@ import type { apiTpag, IBlocks, Tpagination } from "@/types/index";
 import useNotification from "../logic/useNotification";
 import useModal from "@/store/useModal";
 import { formDataKeysAndValues } from "@/utils/index";
-import { createApiBlock, getApiBlocksByDoctor } from "@/services/blockAndVacations.service";
+import { createApiBlock, deleteApiBlock, getApiBlocksByDoctor } from "@/services/blockAndVacations.service";
 import type { DatePickerProps } from "antd";
 
 
@@ -69,6 +69,17 @@ const useBlocks = ({ fetchData = false, idDoctor }: { fetchData: boolean, own?: 
         setPag({ ...pag, search: values.search })
     }
 
+    const deleteBlock = async (id: number) => {
+        const response = await deleteApiBlock({ id, errorfun: showNotification })
+        if (response && response.status) {
+            close("deleteService")
+            showNotification({ type: "success", content: `Bloqueo eliminado correctamente` });
+            getBlocks();
+        } else {
+            showNotification({ type: "error", content: response.msg });
+        }
+    }
+
     const onChangeTime = (timeString: string | null, set: 'start' | 'end') => {
         if (set != 'end') {
             if (timeString) setTimes({ ...times, startTime: timeString })
@@ -87,7 +98,8 @@ const useBlocks = ({ fetchData = false, idDoctor }: { fetchData: boolean, own?: 
         onChangeDate,
         onChangeTime,
         pag,
-        handlePagination
+        handlePagination,
+        deleteBlock
     }
 }
 
