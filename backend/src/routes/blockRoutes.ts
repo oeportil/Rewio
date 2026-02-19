@@ -5,8 +5,8 @@ import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 const router = Router();
 
 router.use(authMiddleware)
-router.post("/blocks", idempotencyMiddleware, blockController.create)
-router.get("/blocks", blockController.getByDoctor)       // ?doctorId=&date=
-router.delete("/blocks/:id", blockController.delete)
+router.post("/", idempotencyMiddleware, blockController.create)
+router.get("/:id", blockController.getByDoctor)       // ?doctorId=&date=
+router.delete("/:id", blockController.delete)
 
 export default router;

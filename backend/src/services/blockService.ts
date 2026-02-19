@@ -31,7 +31,6 @@ export const createBlock = async (req: Request) => {
 
 export const getBlocksByDoctor = async (doctorId: number, date?: string) => {
     const where: any = { doctorId }
-
     if (date) where.date = new Date(date)
 
     return prisma.doctorBlock.findMany({

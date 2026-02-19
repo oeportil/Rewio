@@ -128,3 +128,19 @@ export interface IDoctor {
     userId: number
 }
 
+export interface IVacations {
+    id: number
+    doctorId: number
+    startDate: string
+    endDate: string
+    reason: string
+}
+
+export interface IBlocks {
+    id: number
+    doctorId: number
+    date: string
+    startTime: string
+    endTime: string
+    reason: string
+}

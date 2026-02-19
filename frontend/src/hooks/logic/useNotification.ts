@@ -1,5 +1,5 @@
+import type { Toptions } from "@/types/index";
 import { message } from "antd";
-import type { Toptions } from "../types";
 
 const useNotification = () => {
     const [messageApi, contextHolder] = message.useMessage();

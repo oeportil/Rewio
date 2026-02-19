@@ -9,11 +9,11 @@ class blockController extends BaseController {
     }
 
     static getByDoctor(req: Request, res: Response) {
-        const { doctorId } = req.query
+        const { id } = req.params
         const { date } = req.query
 
         blockController.handle(res, () =>
-            getBlocksByDoctor(Number(doctorId), date as string)
+            getBlocksByDoctor(Number(id), date as string)
         )
     }
 

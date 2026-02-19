@@ -4,8 +4,8 @@ import { authMiddleware, idempotencyMiddleware } from "../middlewares";
 
 const router = Router();
 router.use(authMiddleware)
-router.post("/vacations", idempotencyMiddleware, vacationController.create)
-router.get("/vacations", vacationController.getByDoctor) // ?doctorId=
-router.delete("/vacations/:id", vacationController.delete)
+router.post("/", idempotencyMiddleware, vacationController.create)
+router.get("/:id", vacationController.getByDoctor) // ?doctorId=
+router.delete("/:id", vacationController.delete)
 
 export default router;

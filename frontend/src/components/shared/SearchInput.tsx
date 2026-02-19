@@ -6,10 +6,12 @@ const SearchInput = ({
   handlePagination,
   pag,
   className,
+  type = "text",
 }: {
   handlePagination: (values: Tpagination) => void;
   pag: Tpagination;
   className?: string;
+  type?: string;
 }) => {
   const [value, setValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -29,7 +31,7 @@ const SearchInput = ({
 
   return (
     <FormInput
-      type="text"
+      type={type}
       value={value}
       onChange={(e) => setValue(e.target.value)}
       placeholder="Buscar Clinica"
