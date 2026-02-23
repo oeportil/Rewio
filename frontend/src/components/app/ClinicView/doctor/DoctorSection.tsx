@@ -10,7 +10,14 @@ type Prop = {
 };
 
 const DoctorSection = ({ clinicId }: Prop) => {
-  const { values, contextHolder, pag, handlePagination } = useDoctor({
+  const {
+    values,
+    contextHolder,
+    pag,
+    handlePagination,
+    saveDoctor,
+    setUserId,
+  } = useDoctor({
     fetchData: true,
     type: "owners",
     clinicId,
@@ -27,9 +34,13 @@ const DoctorSection = ({ clinicId }: Prop) => {
       {contextHolder}
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex md:flex-row flex-col justify-between items-center mb-6">
         <h2 className="text-lg font-bold text-slate-900">👨‍⚕️ Doctores</h2>
-        <DoctorModal clinicId={clinicId} />
+        <DoctorModal
+          clinicId={clinicId}
+          saveDoctor={saveDoctor}
+          setUserId={setUserId}
+        />
       </div>
 
       {/* Lista */}

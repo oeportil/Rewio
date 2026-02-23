@@ -61,7 +61,6 @@ const useBlocks = ({ fetchData = false, idDoctor }: { fetchData: boolean, own?: 
     }, [pag])
 
     const onChangeDate: DatePickerProps["onChange"] = (_, dateString) => {
-        console.log(dateString)
         if (dateString) setTimes({ ...times, date: dateString as string })
     };
 

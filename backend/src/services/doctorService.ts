@@ -149,14 +149,27 @@ export const deleteDoctor = async (req: Request) => {
 //#region Schedules
 export const createScheduleDoctor = async (req: Request) => {
     const { doctorId, clinicId } = req.params
-    const { schedule }: { schedule: DoctorSchedule } = req.body
+    const schedule = req.body
     //buscar doctores
     const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
     if (!foundDoctor) throw new Error("Doctor no encontrado");
-    if (!schedule.startTime || !schedule.endTime || schedule.weekday) throw new Error("Faltan campos necesarios");
-    const newSchedule = prisma.doctorSchedule.create({ data: schedule })
-    if (!newSchedule) throw new Error(UNEXPECTED_ERROR);
-    return newSchedule;
+    if (!schedule.startTime || !schedule.endTime || !schedule.weekdays) throw new Error("Faltan campos necesarios");
+    try {
+        await prisma.doctorSchedule.createMany({
+            data: schedule.weekdays.map((day: string) => ({
+                doctorId: +doctorId,
+                weekday: +day,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime
+            }))
+        });
+
+        return true;
+    } catch (error: any) {
+        if (error.code === "P2002") {
+            throw new Error("Este doctor ya tiene horario asignado para ese día");
+        }
+    }
 }
 
 export const getSchedulesByDoctorId = async (req: Request) => {
@@ -165,7 +178,7 @@ export const getSchedulesByDoctorId = async (req: Request) => {
     const foundDoctor = await prisma.doctor.findFirst({ where: { id: +doctorId, clinicId: +clinicId } });
     if (!foundDoctor) throw new Error("Doctor no encontrado");
 
-    const schedules = prisma.doctorSchedule.findMany({ where: { doctorId: +doctorId } })
+    const schedules = prisma.doctorSchedule.findMany({ where: { doctorId: +doctorId }, orderBy: { weekday: "asc" } })
 
     return schedules;
 }
@@ -181,8 +194,6 @@ export const replaceDoctorSchedules = async (req: Request) => {
         await tx.doctorSchedule.deleteMany({
             where: { doctorId: +doctorId }
         })
-
-
         return tx.doctorSchedule.createMany({
             data: schedules.map(s => ({
                 doctorId: +doctorId,

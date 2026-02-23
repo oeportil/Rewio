@@ -50,7 +50,7 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
       </p>
       <Dialog
         id="vacations"
-        buttonStyles="bg-sky-600 text-white px-4 rounded-lg hover:bg-sky-700 transition cursor-pointer mt-2"
+        buttonStyles="bg-sky-600 w-full md:w-fit text-white px-4 rounded-lg hover:bg-sky-700 transition cursor-pointer mt-2"
         buttonContent={"+ Agregar"}
       >
         <h2 className="text-start text-sky-700 font-semibold text-lg flex gap-1 items-center justify-start">
@@ -123,10 +123,10 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
       <p className="text-end text-sky-700 font-semibold text-base flex gap-1 items-center justify-end">
         Bloqueos <MdBlock className="text-red-500" />
       </p>
-      <div className="flex gap-2 items-center mt-2">
+      <div className="flex lg:flex-row flex-col gap-2 items-center mt-2">
         <Dialog
           id="blocks"
-          buttonStyles="bg-red-600 text-white px-4 rounded-lg hover:bg-red-700 transition cursor-pointer mt-5"
+          buttonStyles="bg-red-600 lg:w-fit w-full text-white px-4 rounded-lg hover:bg-red-700 transition cursor-pointer mt-5"
           buttonContent={"+ Agregar"}
         >
           <h2 className="text-start text-sky-700 font-semibold text-lg flex gap-1 items-center justify-start">
@@ -186,7 +186,7 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
             </div>
           </form>
         </Dialog>
-        <div className="flex-2 flex items-end flex-col">
+        <div className="flex-2 flex items-end flex-col w-full">
           <label htmlFor="" className="text-sky-950 text-end">
             Filtro por fecha
           </label>
@@ -194,7 +194,7 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
             type="date"
             pag={pag}
             handlePagination={handlePagination}
-            className="bg-white"
+            className="bg-white w-full"
           />
         </div>
       </div>
@@ -227,7 +227,7 @@ const BlocksAndVacations = ({ idDoctor }: Prop) => {
       <h2 className="text-lg font-bold mb-6">🚫 Bloqueos y Vacaciones</h2>
       <div className="grid md:grid-cols-2 grid-cols-1 items-center gap-4">
         {forCards.map((ctn, i) => (
-          <article className="bg-gray-200 p-6 rounded-2xl" key={i}>
+          <article className="bg-gray-100 p-6 rounded-2xl" key={i}>
             {ctn}
           </article>
         ))}

@@ -19,7 +19,7 @@ router.use('/schedules', (() => {
     sche.post('/:clinicId/:doctorId', idempotencyMiddleware, doctorController.createSchedule)
     sche.get('/:clinicId/:doctorId', doctorController.getSchedulesByDoctor)
     sche.put('/:clinicId/:doctorId', doctorController.replaceSchedules)
-    sche.post('/:id', idempotencyMiddleware, doctorController.deleteSchedules)
+    sche.delete('/:id', idempotencyMiddleware, doctorController.deleteSchedules)
     return sche
 })())
 

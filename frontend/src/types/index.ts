@@ -144,3 +144,27 @@ export interface IBlocks {
     endTime: string
     reason: string
 }
+
+export interface ISchedule {
+    endTime: string,
+    startTime: string,
+    weekday: string
+    id: number
+}
+
+
+// doctorId
+// :
+// 1
+// endTime
+// :
+// "11:00:00"
+// id
+// :
+// 1
+// startTime
+// :
+// "04:00:00"
+// weekday
+// :
+// 2

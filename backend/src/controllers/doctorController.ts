@@ -38,7 +38,7 @@ class doctorController extends BaseController {
 
     //#region Schedules
     static createSchedule(req: Request, res: Response) {
-        doctorController.handle<DoctorSchedule>(res, () => createScheduleDoctor(req))
+        doctorController.handle(res, () => createScheduleDoctor(req))
     }
 
     static getSchedulesByDoctor(req: Request, res: Response) {

@@ -6,17 +6,24 @@ import useDoctor from "@/hooks/Module/useDoctor";
 import type { IUser } from "@/types/index";
 import { debounce } from "@/utils/index";
 import { Select } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { FaPlus } from "react-icons/fa";
 
-const DoctorModal = ({ clinicId }: { clinicId: number }) => {
+const DoctorModal = ({
+  clinicId,
+  saveDoctor,
+  setUserId,
+}: {
+  clinicId: number;
+  saveDoctor: (e: FormEvent<HTMLFormElement>) => void;
+  setUserId: (id: number) => void;
+}) => {
   //values para mapear los usuarios con rol doctores en un select
-  const { values, handlePagination, saveDoctor, contextHolder, setUserId } =
-    useDoctor({
-      fetchData: true,
-      type: "all",
-      clinicId,
-    });
+  const { values, handlePagination, contextHolder } = useDoctor({
+    fetchData: true,
+    type: "all",
+    clinicId,
+  });
   useEffect(() => {
     handlePagination({ page: 1, limit: 100, search: "" });
     // eslint-disable-next-line react-hooks/exhaustive-deps

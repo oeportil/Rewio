@@ -1,4 +1,5 @@
-import { create } from 'zustand'
+import { useEffect } from "react";
+import { create } from "zustand";
 
 interface WindowSizeState {
     width: number;
@@ -9,7 +10,21 @@ interface WindowSizeState {
 const useWindowSize = create<WindowSizeState>((set) => ({
     width: window.innerWidth,
     height: window.innerHeight,
-    setSize: (width: number, height: number) => set({ width, height }),
-}))
+    setSize: (width, height) => set({ width, height }),
+}));
+
+export const useWindowSizeListener = () => {
+    const setSize = useWindowSize((state) => state.setSize);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setSize(window.innerWidth, window.innerHeight);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => window.removeEventListener("resize", handleResize);
+    }, [setSize]);
+};
 
 export default useWindowSize;

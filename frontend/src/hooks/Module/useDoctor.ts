@@ -3,10 +3,9 @@ import type { apiTpag, IDoctor, IUser, Tpagination } from "@/types/index";
 import usePagination from "../logic/usePagination";
 import useNotification from "../logic/useNotification";
 import useModal from "@/store/useModal";
-import { deleteApiUser } from "@/services/user.service";
 import useStoreAuth from "@/store/useStoreAuth";
 import { useUserStore } from "@/store/useUserStore";
-import { createApiDoctor, getApiDoctorById, getApiDoctors, getApiMyDoctors, updateApiDoctor } from "@/services/doctor.service";
+import { createApiDoctor, deleteApiDoctor, getApiDoctorById, getApiDoctors, getApiMyDoctors, updateApiDoctor } from "@/services/doctor.service";
 import { formDataKeysAndValues } from "@/utils/index";
 
 
@@ -49,8 +48,8 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
         else showNotification({ type: "error", content: response.msg });
     }
 
-    const disableUser = async () => {
-        const response = await deleteApiUser({ errorfun: showNotification })
+    const deleteDoctor = async (id: number) => {
+        const response = await deleteApiDoctor({ errorfun: showNotification, id }, clinicId!)
         if (response && response.status) {
             closeSesion()
             window.location.href = "/login"
@@ -102,7 +101,7 @@ const useDoctor = ({ fetchData = true, type = 'all', clinicId }: { fetchData: bo
         handlePagination,
         pag,
         saveDoctor,
-        disableUser,
+        deleteDoctor,
         setUserId,
         doctor,
         getDoctorByClinicAndId,

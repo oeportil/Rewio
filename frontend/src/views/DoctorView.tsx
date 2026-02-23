@@ -5,6 +5,7 @@ import { useParams } from "react-router";
 import Configuration from "@/components/app/DoctorView/Configuration";
 import BlocksAndVacations from "@/components/app/DoctorView/BlocksAndVacations";
 import DoctorSchedules from "@/components/app/DoctorView/DoctorSchedules";
+import DoctorDangerZone from "@/components/app/DoctorView/DoctorDangerZone";
 
 const DoctorView = () => {
   const { doctorId, clinicId } = useParams();
@@ -16,6 +17,7 @@ const DoctorView = () => {
     form,
     setForm,
     updateDoctor,
+    deleteDoctor,
   } = useDoctor({
     fetchData: false,
     clinicId: clinicId ? +clinicId : 0,
@@ -38,7 +40,7 @@ const DoctorView = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-center"
+        className="bg-white p-6 rounded-2xl shadow-md flex md:flex-row flex-col items-start justify-between md:items-center"
       >
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
@@ -55,17 +57,7 @@ const DoctorView = () => {
           {form.specialty}
         </span>
       </motion.div>
-      {/* CONFIGURACIÓN */}
-      <Configuration
-        form={form}
-        setForm={setForm}
-        id={doctor.id}
-        updateDoctor={updateDoctor}
-      />
-      {/* HORARIOS */}
-      <DoctorSchedules idDoctor={doctor.id} />
-      {/* BLOQUEOS / VACACIONES */}
-      <BlocksAndVacations idDoctor={doctor.id} />
+
       {/* AGENDA */}
       <div className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-lg font-bold mb-6">📅 Agenda del Doctor</h2>
@@ -77,6 +69,21 @@ const DoctorView = () => {
           </div>
         </div>
       </div>
+      {/* HORARIOS */}
+      <DoctorSchedules idDoctor={doctor.id} />
+      {/* BLOQUEOS / VACACIONES */}
+      <BlocksAndVacations idDoctor={doctor.id} />
+
+      {/* CONFIGURACIÓN */}
+      <Configuration
+        form={form}
+        setForm={setForm}
+        id={doctor.id}
+        updateDoctor={updateDoctor}
+      />
+
+      {/* ELIMINAR EL DOCTOR EN DANGER ZONE */}
+      <DoctorDangerZone doctor={doctor} removeDoctor={deleteDoctor} />
     </div>
   );
 };

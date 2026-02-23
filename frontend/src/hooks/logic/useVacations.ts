@@ -36,7 +36,6 @@ const useVacations = ({ fetchData = false, idDoctor }: { fetchData: boolean, own
             close("vacations");
             setDates({ startDate: "", endDate: "" })
             if (fetchData) {
-                console.log("no traigo las cosas")
                 getVacations();
             }
         } else {

@@ -1,5 +1,5 @@
 import type { apiTdelete, apiTpag, apiTpatchAndPut, apiTpost } from "../types";
-import { postBase, getBase, patchBase, deleteBase, putBase } from "./base/base.service";
+import { postBase, getBase, patchBase, deleteBase } from "./base/base.service";
 
 export const getApiDoctors = async ({ page, limit, search, errorfun }: apiTpag) => {
     return getBase({ page, limit, search, errorfun }, "/user/doctors");
@@ -17,18 +17,10 @@ export const updateApiDoctor = async ({ data, errorfun, id }: apiTpatchAndPut, i
     return patchBase({ data, errorfun, id }, `/doctor/${idClinic}`);
 }
 
+export const deleteApiDoctor = async ({ errorfun, id }: apiTdelete, idClinic: number) => {
+    return deleteBase({ errorfun, id }, `/doctor/${idClinic}`);
+}
 
 export const getApiDoctorById = async (idClinic: number, idDoctor: number) => {
     return getBase({ page: 1, limit: 1, search: "", errorfun: () => { } }, `/doctor/${idClinic}/${idDoctor}`);
-}
-
-
-export const changePassApiUser = async ({ data, errorfun }: apiTpatchAndPut) => {
-    return putBase({ data, errorfun }, "/user/password-me");
-}
-
-
-
-export const deleteApiUser = async ({ errorfun, id }: apiTdelete) => {
-    return deleteBase({ id, errorfun }, "/user");
 }

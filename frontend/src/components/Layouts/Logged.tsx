@@ -6,11 +6,13 @@ import SideBar from "../shared/SideBar";
 import { Layout } from "antd";
 import { getMeAction } from "@/services/auth.service";
 import { useUserStore } from "@/store/useUserStore";
+import { useWindowSizeListener } from "@/store/useWindowSize";
 
 const Logged = () => {
   const { pathname } = useLocation();
   const token = useStoreAuth((set) => set.token);
   const { saveUser, user } = useUserStore();
+  useWindowSizeListener();
   const getME = async () => {
     const actualuser = await getMeAction();
     if (actualuser.status) saveUser(actualuser.value);

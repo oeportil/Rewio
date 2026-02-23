@@ -116,7 +116,7 @@ model DoctorSchedule {
 
   doctor Doctor @relation(fields: [doctorId], references: [id])
 
-  @@unique([doctorId, weekday, startTime, endTime])
+  @@unique([doctorId, weekday])
 }
 
 model Appointment {

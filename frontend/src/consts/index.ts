@@ -54,3 +54,14 @@ export const rangePresets: TimeRangePickerProps["presets"] = [
     { label: "30 Dias", value: [dayjs().add(30, "d"), dayjs()] },
     { label: "90 Dias", value: [dayjs().add(90, "d"), dayjs()] },
 ];
+
+
+export const weekdays = [
+    { id: 1, label: "Lunes", value: "1" },
+    { id: 2, label: "Martes", value: "2" },
+    { id: 3, label: "Miércoles", value: "3" },
+    { id: 4, label: "Jueves", value: "4" },
+    { id: 5, label: "Viernes", value: "5" },
+    { id: 6, label: "Sabado", value: "6" },
+    { id: 7, label: "Domingo", value: "7" },
+]
