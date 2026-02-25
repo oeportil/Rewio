@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
 import type { IClinic, IDoctor } from "@/types/index";
 import { useService } from "@/hooks/Module/useService";
 import useDoctor from "@/hooks/Module/useDoctor";
 import AvailableSchedules from "./patient/AvailableSchedules";
+import { useStoreAppointment } from "@/store/useStoreAppointment";
 
 interface Props {
   clinic: IClinic | null;
@@ -16,9 +16,8 @@ const Patient = ({ clinic }: Props) => {
     type: "owners",
     clinicId: clinic!.id,
   });
-  const [selectedDoctor, setSelectedDoctor] = useState<number | null>(null);
-  const [selectedService, setSelectedService] = useState<number | null>(null);
 
+  const { updateAppointment: store, appointment } = useStoreAppointment();
   const appointments = [
     {
       id: 1,
@@ -28,7 +27,6 @@ const Patient = ({ clinic }: Props) => {
       status: "Confirmada",
     },
   ];
-
   if (!clinic) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -59,75 +57,6 @@ const Patient = ({ clinic }: Props) => {
         </div>
       </motion.div>
 
-      {/* SERVICIOS */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-lg font-bold mb-6">🛠 Servicios Disponibles</h2>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          {services.map((service) => (
-            <div
-              key={service.id}
-              onClick={() => setSelectedService(service.id)}
-              className={`p-4 rounded-xl border cursor-pointer transition
-                ${
-                  selectedService === service.id
-                    ? "border-sky-500 bg-sky-50"
-                    : "border-slate-200 hover:border-sky-400"
-                }
-              `}
-            >
-              <p className="font-semibold">{service.name}</p>
-              <p className="text-sm text-slate-500">
-                {service.duration} min · ${service.price}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* DOCTORES */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-lg font-bold mb-6">👨‍⚕️ Doctores</h2>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          {doctors.map((doctor) => {
-            const d = doctor as IDoctor;
-            return (
-              <div
-                key={d.id}
-                onClick={() => setSelectedDoctor(d.id)}
-                className={`p-4 rounded-xl border cursor-pointer transition
-                ${
-                  selectedDoctor === d.id
-                    ? "border-sky-500 bg-sky-50"
-                    : "border-slate-200 hover:border-sky-400"
-                }
-              `}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: d.color }}
-                  />
-                  <div>
-                    <p className="font-semibold">{d.user.name}</p>
-                    <p className="text-sm text-slate-500">{d.specialty}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* HORARIOS DISPONIBLES */}
-      {selectedDoctor && selectedService && (
-        <AvailableSchedules
-          idDoctor={selectedDoctor}
-          idService={selectedService}
-        />
-      )}
-
       {/* HISTORIAL */}
       <div className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-lg font-bold text-slate-900 mb-6">📅 Mis Citas</h2>
@@ -153,6 +82,82 @@ const Patient = ({ clinic }: Props) => {
           ))}
         </div>
       </div>
+
+      {/* SERVICIOS */}
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h2 className="text-lg font-bold mb-6">🛠 Servicios Disponibles</h2>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              onClick={() => {
+                store({ serviceId: service.id, duration: service.duration });
+              }}
+              className={`p-4 rounded-xl border cursor-pointer transition
+                ${
+                  appointment.serviceId != 0 &&
+                  appointment.serviceId === service.id
+                    ? "border-sky-500 bg-sky-50"
+                    : "border-slate-200 hover:border-sky-400"
+                }
+              `}
+            >
+              <p className="font-semibold">{service.name}</p>
+              <p className="text-sm text-slate-500">
+                {service.duration} min · ${service.price}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* DOCTORES */}
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h2 className="text-lg font-bold mb-6">👨‍⚕️ Doctores</h2>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {doctors.map((doctor) => {
+            const d = doctor as IDoctor;
+            return (
+              <div
+                key={d.id}
+                onClick={() => {
+                  store({ doctorId: d.id });
+                }}
+                className={`p-4 rounded-xl border cursor-pointer transition
+                ${
+                  appointment.doctorId != 0 && appointment.doctorId === d.id
+                    ? "border-sky-500 bg-sky-50"
+                    : "border-slate-200 hover:border-sky-400"
+                }
+              `}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: d.color }}
+                  />
+                  <div>
+                    <p className="font-semibold">{d.user.name}</p>
+                    <p className="text-sm text-slate-500">{d.specialty}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* HORARIOS DISPONIBLES */}
+      {appointment &&
+        appointment.doctorId != 0 &&
+        appointment.serviceId != 0 && (
+          <AvailableSchedules
+            idDoctor={appointment.doctorId}
+            idService={appointment.serviceId}
+          />
+        )}
     </div>
   );
 };

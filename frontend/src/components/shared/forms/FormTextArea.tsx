@@ -22,7 +22,7 @@ export const FormTextArea = ({
         value={value}
         onChange={handleChange}
         maxLength={maxLength}
-        className={`${className} border m-1 border-gray-300 rounded-sm h-32  py-1 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-transparent resize-y max-h-44 min-h-16`}
+        className={`${className} border m-1 border-gray-300 rounded-sm h-32  py-1 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-transparent resize-y max-h-44 min-h-16`}
       >
         {value}
       </textarea>

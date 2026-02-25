@@ -42,7 +42,8 @@ const useAvailability = ({ idDoctor, idService }: { idDoctor: number, idService:
         contextHolder,
         availableSlots,
         disabledDate,
-        onChangeDate
+        onChangeDate,
+        date
     }
 }
 

@@ -3,17 +3,15 @@ import { prisma } from "../config/client"
 import { Appointment } from "../generated/prisma"
 import { calculateEndTime, hasCollision, isWithinDoctorSchedule } from "./appointmentRule"
 import { getUserByToken } from "../utils"
+import { UNEXPECTED_ERROR } from "../consts"
 
 export const createAppointment = async (req: Request) => {
     const { doctorId, serviceId, date, startTime, notes } = req.body
 
     const user = getUserByToken(req)
 
-    // Obtener paciente
-    const patient = await prisma.patient.findFirst({
-        where: { userId: user.id }
-    })
-    if (!patient) throw new Error("El usuario no es paciente")
+    //verificar que el usuario sea paciente
+    if (user.role != "patient") throw new Error("No puedes realizar la cita porque no eres paciente")
 
     // Obtener doctor
     const doctor = await prisma.doctor.findUnique({
@@ -22,39 +20,58 @@ export const createAppointment = async (req: Request) => {
     })
     if (!doctor) throw new Error("Doctor no existe")
 
-    // Calcular hora de fin real
-    const endTime = await calculateEndTime(serviceId, startTime)
+    return await prisma.$transaction(async (tx) => {
 
-    //  Validar si el horario es valido
-    const validSchedule = await isWithinDoctorSchedule(
-        doctorId,
-        new Date(date),
-        startTime,
-        endTime
-    )
-    if (!validSchedule) throw new Error("Fuera del horario del doctor")
+        // Obtener paciente
+        const foundedPatient = await prisma.patient.findFirst({
+            where: { userId: user.id, clinicId: doctor.clinicId }
+        })
 
-    // validar las colisiones
-    const collision = await hasCollision(
-        doctorId,
-        new Date(date),
-        startTime,
-        endTime
-    )
-    if (collision) throw new Error("Ese horario ya está ocupado")
-
-    // Crear cita
-    return prisma.appointment.create({
-        data: {
-            clinicId: doctor.clinicId,
-            doctorId,
-            patientId: patient.id,
-            serviceId,
-            date: new Date(date),
-            startTime,
-            endTime,
-            notes
+        let patient = foundedPatient;
+        if (!foundedPatient) {
+            const newPatient = await tx.patient.create({
+                data: {
+                    clinicId: doctor.clinicId,
+                    userId: user.id
+                }
+            })
+            if (!newPatient) throw new Error(UNEXPECTED_ERROR)
+            patient = await newPatient;
         }
+        // Calcular hora de fin real
+        const endTime = await calculateEndTime(serviceId, startTime)
+
+        //  Validar si el horario es valido
+        const validSchedule = await isWithinDoctorSchedule(
+            doctorId,
+            new Date(date),
+            startTime,
+            endTime
+        )
+        if (!validSchedule) throw new Error("Fuera del horario del doctor")
+
+        // validar las colisiones
+        const collision = await hasCollision(
+            doctorId,
+            new Date(date),
+            startTime,
+            endTime
+        )
+        if (collision) throw new Error("Ese horario ya está ocupado")
+
+        // Crear cita
+        return prisma.appointment.create({
+            data: {
+                clinicId: doctor.clinicId,
+                doctorId,
+                patientId: patient!.id,
+                serviceId,
+                date: new Date(date),
+                startTime,
+                endTime,
+                notes
+            }
+        })
     })
 }
 

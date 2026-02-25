@@ -157,4 +157,12 @@ export type AvailabilityResponse =
     | Record<number, string[]>
 
 
+export interface IAppointment {
+    doctorId: number,
+    serviceId: number,
+    date: string,
+    startTime: string
+    notes: string
+    duration: number
+}
 

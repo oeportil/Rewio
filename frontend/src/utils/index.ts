@@ -34,3 +34,31 @@ export function debounce<T extends (...args: any[]) => void>(fn: T, delay = 400)
         }, delay);
     };
 }
+
+
+export const calculateEndTime = (duration: number, startTime: string) => {
+    const [h, m] = startTime.split(":").map(Number);
+    const start = new Date(2000, 0, 1, h, m);
+    start.setMinutes(start.getMinutes() + duration);
+
+    const endH = start.getHours().toString().padStart(2, "0");
+    const endM = start.getMinutes().toString().padStart(2, "0");
+
+    return `${endH}:${endM}`;
+};
+
+export const addMonthAndYear = (day: number) => {
+    const today = new Date()
+
+    const todayDay = today.getDay()
+    let diff = day - todayDay
+
+    if (diff <= 0) {
+        diff += 7
+    }
+
+    const result = new Date(today)
+    result.setDate(today.getDate() + diff)
+
+    return result.toISOString().split("T")[0]
+}

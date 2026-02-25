@@ -6,7 +6,7 @@ class appointmentController extends BaseController {
 
     //for clients
     static create(req: Request, res: Response) {
-        this.handle(res, () => createAppointment(req))
+        appointmentController.handle(res, () => createAppointment(req))
     }
 
 
@@ -14,7 +14,7 @@ class appointmentController extends BaseController {
         const { id } = req.params
         const { date } = req.query
 
-        return this.handle(res, () =>
+        return appointmentController.handle(res, () =>
             getDoctorAppointments(Number(id), date as string)
         )
     }
@@ -23,35 +23,35 @@ class appointmentController extends BaseController {
         const { id } = req.params
         const { date } = req.query
 
-        return this.handle(res, () =>
+        return appointmentController.handle(res, () =>
             getClinicAppointments(Number(id), date as string)
         )
     }
 
     static myAppointments(req: Request, res: Response) {
-        return this.handle(res, () => getMyAppointments(req))
+        return appointmentController.handle(res, () => getMyAppointments(req))
     }
 
     static confirm(req: Request, res: Response) {
-        return this.handle(res, () =>
+        return appointmentController.handle(res, () =>
             confirmAppointment(req)
         )
     }
 
     static cancel(req: Request, res: Response) {
-        return this.handle(res, () =>
+        return appointmentController.handle(res, () =>
             cancelAppointment(req)
         )
     }
 
     static done(req: Request, res: Response) {
-        return this.handle(res, () =>
+        return appointmentController.handle(res, () =>
             doneAppointment(req)
         )
     }
 
     static reschedule(req: Request, res: Response) {
-        return this.handle(res, () => rescheduleAppointment(req));
+        return appointmentController.handle(res, () => rescheduleAppointment(req));
     }
 
 }
