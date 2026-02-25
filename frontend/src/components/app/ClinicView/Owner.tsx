@@ -10,7 +10,6 @@ import DoctorSection from "./doctor/DoctorSection";
 
 interface Props {
   clinic: IClinic | null;
-  getClinicBySlug: (slug: string) => void;
 }
 
 const Owner = ({ clinic }: Props) => {

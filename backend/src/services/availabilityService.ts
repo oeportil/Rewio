@@ -22,68 +22,128 @@ function isOverlapping(start1: string, end1: string, start2: string, end2: strin
 
 export const getDoctorAvailability = async (
     doctorId: number,
-    date: string,
-    serviceId: number
+    serviceId: number,
+    date?: string
 ) => {
-    const targetDate = new Date(date)
-    const weekday = targetDate.getDay()
 
-    const schedules = await prisma.doctorSchedule.findMany({ where: { doctorId, weekday } })
-    if (schedules.length === 0) return []
+    const isSpecificDate = !!date
 
-    const service = await prisma.service.findUnique({ where: { id: serviceId }, select: { duration: true } })
+    let targetDate: Date | undefined
+    let weekday: number | undefined
+
+    if (isSpecificDate) {
+        targetDate = new Date(date!)
+        weekday = targetDate.getDay() + 1
+    }
+
+    // horarios del doctor
+    const schedules = await prisma.doctorSchedule.findMany({
+        where: {
+            doctorId,
+            ...(weekday !== undefined && { weekday })
+        }
+    })
+
+    if (schedules.length === 0)
+        return isSpecificDate ? [] : {}
+
+    // duración del servicio
+    const service = await prisma.service.findUnique({
+        where: { id: serviceId },
+        select: { duration: true }
+    })
+
     if (!service) throw new Error("Servicio no existe")
 
     const duration = service.duration
 
-    const appointments = await prisma.appointment.findMany({
-        where: { doctorId, date: targetDate, status: { not: "cancelled" } },
-        select: { startTime: true, endTime: true }
-    })
+    // citas existentes
+    const appointments = targetDate
+        ? await prisma.appointment.findMany({
+            where: {
+                doctorId,
+                date: targetDate,
+                status: { not: "cancelled" }
+            },
+            select: { startTime: true, endTime: true }
+        })
+        : []
 
+    // vacaciones
+    const vacations = targetDate
+        ? await prisma.doctorVacation.findMany({
+            where: {
+                doctorId,
+                startDate: { lte: targetDate },
+                endDate: { gte: targetDate }
+            },
+            select: { startDate: true, endDate: true }
+        })
+        : []
 
-    const vacations = await prisma.doctorVacation.findMany({
-        where: {
-            doctorId,
-            startDate: { lte: targetDate },
-            endDate: { gte: targetDate }
-        },
-        select: { startDate: true, endDate: true }
-    })
+    // bloqueos manuales
+    const blocks = targetDate
+        ? await prisma.doctorBlock.findMany({
+            where: {
+                doctorId,
+                date: targetDate
+            },
+            select: { startTime: true, endTime: true }
+        })
+        : []
 
-    const blocks = await prisma.doctorBlock.findMany({
-        where: {
-            doctorId,
-            date: targetDate
-        },
-        select: { startTime: true, endTime: true }
-    })
-
+    // ✅ respuestas
     const availableSlots: string[] = []
+    const availableSlotsByDay: Record<number, string[]> = {}
 
     for (const s of schedules) {
+
+        if (!availableSlotsByDay[s.weekday]) {
+            availableSlotsByDay[s.weekday] = []
+        }
+
         let current = s.startTime
 
         while (true) {
+
             const end = addMinutes(current, duration)
             if (end > s.endTime) break
 
-            const collision = appointments.some(a => isOverlapping(current, end, a.startTime, a.endTime))
+            const collision = appointments.some(a =>
+                isOverlapping(current, end, a.startTime, a.endTime)
+            )
+
             const inVacation = vacations.some(vac => {
                 const vacStart = vac.startDate.toTimeString().slice(0, 5)
                 const vacEnd = vac.endDate.toTimeString().slice(0, 5)
                 return isOverlapping(current, end, vacStart, vacEnd)
             })
-            const inBlock = blocks.some(b => isOverlapping(current, end, b.startTime, b.endTime))
 
-            if (!collision && !inVacation && !inBlock) availableSlots.push(current)
+            const inBlock = blocks.some(b =>
+                isOverlapping(current, end, b.startTime, b.endTime)
+            )
+
+            if (!collision && !inVacation && !inBlock) {
+
+                // respuesta cuando viene fecha
+                if (isSpecificDate) {
+                    availableSlots.push(current)
+                }
+
+                // respuesta semanal
+                availableSlotsByDay[s.weekday].push(current)
+            }
 
             current = addMinutes(current, duration)
         }
     }
 
-    return availableSlots
+    // retorno dinámico
+    return isSpecificDate
+        ? availableSlots
+        : availableSlotsByDay
 }
+
 
 export const getDoctorScheduleByServAndDate = async (
     date: Date,

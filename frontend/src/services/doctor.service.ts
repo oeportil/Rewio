@@ -24,3 +24,8 @@ export const deleteApiDoctor = async ({ errorfun, id }: apiTdelete, idClinic: nu
 export const getApiDoctorById = async (idClinic: number, idDoctor: number) => {
     return getBase({ page: 1, limit: 1, search: "", errorfun: () => { } }, `/doctor/${idClinic}/${idDoctor}`);
 }
+
+export const getApiAvailability = async (idDoctor: number, idService: number, date: string = "") => {
+    return getBase({ page: 1, limit: 1, search: "", errorfun: () => { } },
+        `/doctor/${idDoctor}/availability?date=${date}&service=${idService}&`);
+}

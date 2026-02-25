@@ -130,7 +130,7 @@ const ServiceModal = ({ initialData, saveService, setClear }: Props) => {
           <button
             onClick={handleSubmit}
             className="bg-sky-600 text-white px-5 py-2 rounded-lg 
-            font-semibold hover:bg-sky-800 transition-all duration-300"
+            font-semibold hover:bg-sky-800 transition-all duration-300 cursor-pointer"
           >
             {isEditing ? "Actualizar" : "Crear"}
           </button>

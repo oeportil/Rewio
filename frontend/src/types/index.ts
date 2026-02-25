@@ -152,19 +152,9 @@ export interface ISchedule {
     id: number
 }
 
+export type AvailabilityResponse =
+    | string[]
+    | Record<number, string[]>
 
-// doctorId
-// :
-// 1
-// endTime
-// :
-// "11:00:00"
-// id
-// :
-// 1
-// startTime
-// :
-// "04:00:00"
-// weekday
-// :
-// 2
+
+

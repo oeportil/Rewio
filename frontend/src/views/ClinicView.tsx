@@ -17,10 +17,14 @@ const ClinicView = () => {
 
   return (
     <ModulesLayout title="">
-      {user?.role != "patient" ? (
-        <Owner clinic={clinic} getClinicBySlug={getClinicBySlug} />
-      ) : (
-        <Patient clinic={clinic} getClinicBySlug={getClinicBySlug} />
+      {clinic.id && (
+        <>
+          {user?.role != "patient" ? (
+            <Owner clinic={clinic} />
+          ) : (
+            <Patient clinic={clinic} />
+          )}
+        </>
       )}
     </ModulesLayout>
   );

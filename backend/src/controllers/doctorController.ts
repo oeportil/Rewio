@@ -29,10 +29,10 @@ class doctorController extends BaseController {
 
     static availability(req: Request, res: Response) {
         const { id } = req.params
-        const { date, serviceId } = req.query
+        const { date, service } = req.query
 
         return doctorController.handle(res, () =>
-            getDoctorAvailability(Number(id), String(date), Number(serviceId))
+            getDoctorAvailability(Number(id), Number(service), String(date))
         )
     }
 

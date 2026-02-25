@@ -1,14 +1,25 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import type { IClinic } from "@/types/index";
+import type { IClinic, IDoctor } from "@/types/index";
+import { useService } from "@/hooks/Module/useService";
+import useDoctor from "@/hooks/Module/useDoctor";
+import AvailableSchedules from "./patient/AvailableSchedules";
 
 interface Props {
   clinic: IClinic | null;
-  getClinicBySlug: (slug: string) => void;
 }
 
 const Patient = ({ clinic }: Props) => {
-  const [appointments] = useState([
+  const { values: services } = useService(clinic!.id);
+  const { values: doctors } = useDoctor({
+    fetchData: true,
+    type: "owners",
+    clinicId: clinic!.id,
+  });
+  const [selectedDoctor, setSelectedDoctor] = useState<number | null>(null);
+  const [selectedService, setSelectedService] = useState<number | null>(null);
+
+  const appointments = [
     {
       id: 1,
       doctor: "Dr. Juan Pérez",
@@ -16,14 +27,7 @@ const Patient = ({ clinic }: Props) => {
       time: "10:30 AM",
       status: "Confirmada",
     },
-    {
-      id: 2,
-      doctor: "Dra. Laura Méndez",
-      date: "2026-01-10",
-      time: "3:00 PM",
-      status: "Completada",
-    },
-  ]);
+  ];
 
   if (!clinic) {
     return (
@@ -34,13 +38,13 @@ const Patient = ({ clinic }: Props) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-10">
-      {/* Header Clínica */}
+    <div className="min-h-screen bg-slate-50 p-6 md:p-10 space-y-10">
+      {/* HEADER */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row md:items-center md:justify-between 
-        bg-white p-6 rounded-2xl shadow-md mb-10"
+        bg-white p-6 rounded-2xl shadow-md"
       >
         <div className="flex items-center gap-4">
           <img
@@ -53,62 +57,102 @@ const Patient = ({ clinic }: Props) => {
             <p className="text-sm text-slate-500">{clinic.address}</p>
           </div>
         </div>
-
-        <button
-          className="mt-4 md:mt-0 bg-sky-600 text-white px-6 py-3 rounded-xl 
-          font-semibold hover:bg-sky-800 transition-all duration-300 shadow-md"
-        >
-          + Agendar Nueva Cita
-        </button>
       </motion.div>
 
-      {/* Historial de Citas */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-white p-6 rounded-2xl shadow-md"
-      >
+      {/* SERVICIOS */}
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h2 className="text-lg font-bold mb-6">🛠 Servicios Disponibles</h2>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              onClick={() => setSelectedService(service.id)}
+              className={`p-4 rounded-xl border cursor-pointer transition
+                ${
+                  selectedService === service.id
+                    ? "border-sky-500 bg-sky-50"
+                    : "border-slate-200 hover:border-sky-400"
+                }
+              `}
+            >
+              <p className="font-semibold">{service.name}</p>
+              <p className="text-sm text-slate-500">
+                {service.duration} min · ${service.price}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* DOCTORES */}
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h2 className="text-lg font-bold mb-6">👨‍⚕️ Doctores</h2>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {doctors.map((doctor) => {
+            const d = doctor as IDoctor;
+            return (
+              <div
+                key={d.id}
+                onClick={() => setSelectedDoctor(d.id)}
+                className={`p-4 rounded-xl border cursor-pointer transition
+                ${
+                  selectedDoctor === d.id
+                    ? "border-sky-500 bg-sky-50"
+                    : "border-slate-200 hover:border-sky-400"
+                }
+              `}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: d.color }}
+                  />
+                  <div>
+                    <p className="font-semibold">{d.user.name}</p>
+                    <p className="text-sm text-slate-500">{d.specialty}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* HORARIOS DISPONIBLES */}
+      {selectedDoctor && selectedService && (
+        <AvailableSchedules
+          idDoctor={selectedDoctor}
+          idService={selectedService}
+        />
+      )}
+
+      {/* HISTORIAL */}
+      <div className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-lg font-bold text-slate-900 mb-6">📅 Mis Citas</h2>
 
         <div className="space-y-4">
           {appointments.map((appointment) => (
             <div
               key={appointment.id}
-              className="flex flex-col md:flex-row md:items-center md:justify-between 
-              p-4 rounded-xl bg-slate-50 hover:bg-sky-50 transition-all duration-300"
+              className="flex justify-between items-center 
+              p-4 rounded-xl bg-slate-50 hover:bg-sky-50 transition"
             >
               <div>
-                <p className="font-semibold text-slate-800">
-                  {appointment.doctor}
-                </p>
+                <p className="font-semibold">{appointment.doctor}</p>
                 <p className="text-sm text-slate-500">
                   {appointment.date} - {appointment.time}
                 </p>
-                <span
-                  className={`text-xs font-semibold px-2 py-1 rounded-md mt-1 inline-block
-                  ${
-                    appointment.status === "Confirmada"
-                      ? "bg-green-100 text-green-600"
-                      : "bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {appointment.status}
-                </span>
               </div>
 
-              {appointment.status === "Confirmada" && (
-                <button
-                  className="mt-3 md:mt-0 text-sky-600 font-semibold 
-                  hover:underline transition"
-                >
-                  Reprogramar
-                </button>
-              )}
+              <button className="text-sky-600 font-semibold hover:underline">
+                Reprogramar
+              </button>
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -29,9 +29,6 @@ export const getServicesByClinic = async (req: Request) => {
     const user = getUserByToken(req)
     const clinicId = Number(req.params.id)
 
-    await assertClinicOwnership(clinicId, user.id)
-
-
     return paginateAdvanced("service", {
         page: Number(req.query.page),
         limit: Number(req.query.limit),
