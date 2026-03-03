@@ -2,7 +2,7 @@ import { Request } from "express"
 import { prisma } from "../config/client"
 import { Appointment } from "../generated/prisma"
 import { calculateEndTime, hasCollision, isWithinDoctorSchedule } from "./appointmentRule"
-import { getUserByToken } from "../utils"
+import { assertClinicOwnership, getUserByToken, paginateAdvanced } from "../utils"
 import { UNEXPECTED_ERROR } from "../consts"
 
 export const createAppointment = async (req: Request) => {
@@ -23,7 +23,7 @@ export const createAppointment = async (req: Request) => {
     return await prisma.$transaction(async (tx) => {
 
         // Obtener paciente
-        const foundedPatient = await prisma.patient.findFirst({
+        const foundedPatient = await tx.patient.findFirst({
             where: { userId: user.id, clinicId: doctor.clinicId }
         })
 
@@ -60,7 +60,7 @@ export const createAppointment = async (req: Request) => {
         if (collision) throw new Error("Ese horario ya está ocupado")
 
         // Crear cita
-        return prisma.appointment.create({
+        return tx.appointment.create({
             data: {
                 clinicId: doctor.clinicId,
                 doctorId,
@@ -78,17 +78,30 @@ export const createAppointment = async (req: Request) => {
 
 
 export const getDoctorAppointments = async (
-    doctorId: number,
-    date?: string
+    req: Request
 ) => {
+    const user = getUserByToken(req)
+    const { id: doctorId } = req.params
+    const { date } = req.query
     const where: any = { doctorId }
 
     if (date) {
-        where.date = new Date(date)
+        where.date = new Date(date as string)
     }
 
-    return prisma.appointment.findMany({
-        where,
+    const doctor = await prisma.doctor.findFirst({ where: { id: +doctorId }, include: { clinic: true } })
+    if (!doctor) throw new Error("doctor no existe")
+
+    if (user.id != doctor.userId && doctor.clinic.ownerId != user.id) throw new Error("No posees los permisos suficientes")
+
+    return paginateAdvanced("appointment", {
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        searchFields: ["date", "status"],
+        filters: {
+            ...where
+        },
         orderBy: { startTime: "asc" },
         include: {
             patient: {
@@ -100,15 +113,26 @@ export const getDoctorAppointments = async (
 }
 
 export const getClinicAppointments = async (
-    clinicId: number,
-    date?: string
+    req: Request
 ) => {
+    const user = getUserByToken(req)
+    const { id: clinicId } = req.params
+    const { date } = req.query
+
     const where: any = { clinicId }
 
-    if (date) where.date = new Date(date)
+    if (date) where.date = new Date(date as string)
 
-    return prisma.appointment.findMany({
-        where,
+    await assertClinicOwnership(+clinicId, user.id)
+
+    return paginateAdvanced("appointment", {
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        searchFields: ["date", "status"],
+        filters: {
+            ...where
+        },
         orderBy: { startTime: "asc" },
         include: {
             doctor: {
@@ -131,12 +155,19 @@ export const getMyAppointments = async (req: Request) => {
     })
     if (!patient) throw new Error("El usuario no es paciente")
 
-    return prisma.appointment.findMany({
-        where: { patientId: patient.id },
+    return paginateAdvanced("appointment", {
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        searchFields: ["date", "status"],
+        filters: {
+            status: req.query.status,
+            patientId: patient.id
+        },
         orderBy: { date: "desc" },
         include: {
             doctor: { include: { user: true } },
-            clinic: true,
+            // clinic: true,
             service: true
         }
     })
@@ -222,7 +253,10 @@ export const rescheduleAppointment = async (req: Request) => {
     // Obtener cita
     const appointment = await prisma.appointment.findUnique({ where: { id: +id } });
     if (!appointment) throw new Error("Cita no existe");
-    if (appointment.patientId !== patient.id) throw new Error("No puedes reprogramar esta cita");
+
+    if (appointment.patientId !== patient.id) throw new Error("No tienes permiso para modificar esta cita");
+
+    if (["cancelled", "done"].includes(appointment.status)) throw new Error("No puedes reprogramar esta cita");
 
     // Obtener doctor
     const doctor = await prisma.doctor.findUnique({ where: { id: appointment.doctorId } });

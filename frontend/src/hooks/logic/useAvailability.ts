@@ -1,50 +1,107 @@
-import { getApiAvailability } from "@/services/doctor.service"
-import { useCallback, useEffect, useState } from "react"
-import useNotification from "./useNotification"
-import type { AvailabilityResponse } from "@/types/index"
-import type { Dayjs } from "dayjs"
-import dayjs from "dayjs"
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+    getApiAvailabilityDays,
+    getApiAvailabilityHours,
+} from "@/services/doctor.service";
 
-const useAvailability = ({ idDoctor, idService }: { idDoctor: number, idService: number }) => {
-    const [availableSlots, setAvailableSlots] = useState<AvailabilityResponse>([])
+import { useCallback, useEffect, useState } from "react";
+import useNotification from "./useNotification";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+
+const useAvailability = ({
+    idDoctor,
+    idService,
+}: {
+    idDoctor: number;
+    idService: number;
+}) => {
     const { contextHolder, showNotification } = useNotification();
-    const [date, setDate] = useState<string>("");
 
-    const getDoctorAvailability = useCallback(
-        async () => {
-            const response = await getApiAvailability(idDoctor, idService, date)
-            if (response && response.status) {
-                setAvailableSlots(response.value)
-            } else {
-                showNotification({ type: "error", content: response.msg })
+    const [availableDays, setAvailableDays] = useState<string[]>([]);
+    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+    const [date, setDate] = useState("");
+
+    // 👇 PANEL ACTUAL DEL CALENDARIO
+    const [month, setMonth] = useState(dayjs().month() + 1);
+    const [year, setYear] = useState(dayjs().year());
+
+
+    const getAvailableDays = useCallback(async () => {
+        const response = await getApiAvailabilityDays(
+            idDoctor,
+            idService,
+            year,
+            month
+        );
+
+        if (response?.status) {
+            setAvailableDays(response.value);
+        } else {
+            showNotification({
+                type: "error",
+                content: response.msg,
+            });
+        }
+    }, [idDoctor, idService, month, year, showNotification]);
+
+
+    const getAvailableHours = useCallback(
+        async (selectedDate: string) => {
+            const response = await getApiAvailabilityHours(
+                idDoctor,
+                idService,
+                selectedDate
+            );
+
+            if (response?.status) {
+                setAvailableSlots(response.value);
             }
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [idDoctor, idService, date],
-    )
-
+        [idDoctor, idService]
+    );
 
     useEffect(() => {
-        getDoctorAvailability()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idDoctor, idService, date])
+        getAvailableDays();
+    }, [month, year, idService, idDoctor]);
 
-    const disabledDate = (current: Dayjs) => {
-        return current && current < dayjs().endOf("day");
+    useEffect(() => {
+        if (date) getAvailableHours(date);
+    }, [date, idService])
+
+
+    const onPanelChange = (value: Dayjs) => {
+        setMonth(value.month() + 1);
+        setYear(value.year());
     };
 
-    const onChangeDate = (_: unknown, date: string | null) => {
-        if (date) setDate(date)
-        else setDate("")
-    }
+
+    const onSelectDate = (value: Dayjs) => {
+        const selected = value.format("YYYY-MM-DD");
+
+        setDate(selected);
+        getAvailableHours(selected);
+    };
+
+    const disabledDate = (current: Dayjs) => {
+        if (!current) return false;
+
+        if (current.endOf("day") < dayjs()) return true;
+
+        return !availableDays.includes(
+            current.format("YYYY-MM-DD")
+        );
+    };
 
     return {
         contextHolder,
         availableSlots,
+        availableDays,
+        date,
         disabledDate,
-        onChangeDate,
-        date
-    }
-}
+        onSelectDate,
+        onPanelChange,
+    };
+};
 
-export default useAvailability
+export default useAvailability;

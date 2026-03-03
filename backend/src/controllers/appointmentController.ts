@@ -11,20 +11,18 @@ class appointmentController extends BaseController {
 
 
     static getDoctorAppointments(req: Request, res: Response) {
-        const { id } = req.params
-        const { date } = req.query
+
 
         return appointmentController.handle(res, () =>
-            getDoctorAppointments(Number(id), date as string)
+            getDoctorAppointments(req)
         )
     }
 
     static getClinicAppointments(req: Request, res: Response) {
-        const { id } = req.params
-        const { date } = req.query
+
 
         return appointmentController.handle(res, () =>
-            getClinicAppointments(Number(id), date as string)
+            getClinicAppointments(req)
         )
     }
 

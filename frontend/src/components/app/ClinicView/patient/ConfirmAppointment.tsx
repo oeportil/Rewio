@@ -1,11 +1,14 @@
 import Dialog from "@/components/shared/Dialog";
+import { useAppointment } from "@/hooks/Module/useAppointment";
 import { useStoreAppointment } from "@/store/useStoreAppointment";
 import { calculateEndTime } from "@/utils/index";
 
 const ConfirmAppointment = () => {
   const { appointment } = useStoreAppointment();
+  const { saveAppointment, contextHolder } = useAppointment();
   return (
     <Dialog id="confirmAppointment" buttonContent="Confirmar Cita">
+      {contextHolder}
       <div className="space-y-6 min-w-[320px]">
         <div>
           <h2 className="text-xl font-bold text-slate-900">Confirmar Cita</h2>
@@ -45,8 +48,9 @@ const ConfirmAppointment = () => {
         {/* Acciones */}
         <div className="flex justify-end gap-3">
           <button
+            onClick={saveAppointment}
             className="bg-sky-600 text-white px-5 py-2 rounded-lg 
-            font-semibold hover:bg-sky-800 transition-all duration-300"
+            font-semibold hover:bg-sky-800 transition-all duration-300 cursor-pointer"
           >
             Confirmar
           </button>

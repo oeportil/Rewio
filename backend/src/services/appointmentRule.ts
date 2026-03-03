@@ -7,7 +7,7 @@ export const isWithinDoctorSchedule = async (
     startTime: string,
     endTime: string
 ): Promise<boolean> => {
-    const weekday = date.getDay();
+    const weekday = date.getDay() + 1;
 
     // Obtener horarios del doctor
     const schedules = await prisma.doctorSchedule.findMany({
@@ -16,6 +16,8 @@ export const isWithinDoctorSchedule = async (
     if (schedules.length === 0) return false;
 
     const withinSchedule = schedules.some(s => startTime >= s.startTime && endTime <= s.endTime);
+    console.log("withinSchedule", withinSchedule)
+    console.log("schedules", schedules)
     if (!withinSchedule) return false;
 
     // Verificar bloqueos
@@ -27,9 +29,11 @@ export const isWithinDoctorSchedule = async (
             endTime: { gte: startTime }
         }
     });
+    console.log("block", block)
     if (block) return false;
 
     // Verificar vacaciones
+
     const vacation = await prisma.doctorVacation.findFirst({
         where: {
             doctorId,
@@ -37,6 +41,7 @@ export const isWithinDoctorSchedule = async (
             endDate: { gte: date }
         }
     });
+    console.log("vacation", vacation)
     if (vacation) return false;
 
     return true;

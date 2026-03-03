@@ -4,6 +4,8 @@ import { useService } from "@/hooks/Module/useService";
 import useDoctor from "@/hooks/Module/useDoctor";
 import AvailableSchedules from "./patient/AvailableSchedules";
 import { useStoreAppointment } from "@/store/useStoreAppointment";
+import { useAppointment } from "@/hooks/Module/useAppointment";
+import Appointments from "./patient/Appointments";
 
 interface Props {
   clinic: IClinic | null;
@@ -18,15 +20,8 @@ const Patient = ({ clinic }: Props) => {
   });
 
   const { updateAppointment: store, appointment } = useStoreAppointment();
-  const appointments = [
-    {
-      id: 1,
-      doctor: "Dr. Juan Pérez",
-      date: "2026-02-15",
-      time: "10:30 AM",
-      status: "Confirmada",
-    },
-  ];
+  const { values } = useAppointment();
+
   if (!clinic) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -57,34 +52,11 @@ const Patient = ({ clinic }: Props) => {
         </div>
       </motion.div>
 
-      {/* HISTORIAL */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-lg font-bold text-slate-900 mb-6">📅 Mis Citas</h2>
-
-        <div className="space-y-4">
-          {appointments.map((appointment) => (
-            <div
-              key={appointment.id}
-              className="flex justify-between items-center 
-              p-4 rounded-xl bg-slate-50 hover:bg-sky-50 transition"
-            >
-              <div>
-                <p className="font-semibold">{appointment.doctor}</p>
-                <p className="text-sm text-slate-500">
-                  {appointment.date} - {appointment.time}
-                </p>
-              </div>
-
-              <button className="text-sky-600 font-semibold hover:underline">
-                Reprogramar
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* CITAS */}
+      <Appointments appointments={values} />
 
       {/* SERVICIOS */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
+      <section className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-lg font-bold mb-6">🛠 Servicios Disponibles</h2>
 
         <div className="grid md:grid-cols-3 gap-4">
@@ -110,10 +82,10 @@ const Patient = ({ clinic }: Props) => {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* DOCTORES */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
+      <section className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-lg font-bold mb-6">👨‍⚕️ Doctores</h2>
 
         <div className="grid md:grid-cols-3 gap-4">
@@ -147,7 +119,7 @@ const Patient = ({ clinic }: Props) => {
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* HORARIOS DISPONIBLES */}
       {appointment &&

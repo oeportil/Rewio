@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import BaseController from "./baseController";
 import { changeDoctorStatus, createDoctor, createScheduleDoctor, deleteDoctor, deleteDoctorSchedule, getDoctorById, getMyDoctors, getSchedulesByDoctorId, replaceDoctorSchedules, updateDoctor } from "../services/doctorService";
 import { Doctor, DoctorSchedule } from "../generated/prisma";
-import { getDoctorAvailability } from "../services/availabilityService";
+import { getDoctorAvailabilityHours, getDoctorAvailableDays } from "../services/availabilityService";
 
 class doctorController extends BaseController {
 
@@ -27,14 +27,24 @@ class doctorController extends BaseController {
     }
 
 
-    static availability(req: Request, res: Response) {
+    static availabilityDays(req: Request, res: Response) {
         const { id } = req.params
-        const { date, service } = req.query
+        const { service, year, month } = req.query
 
         return doctorController.handle(res, () =>
-            getDoctorAvailability(Number(id), Number(service), String(date))
+            getDoctorAvailableDays(Number(id), Number(service), Number(year), Number(month))
         )
     }
+
+    static availabilityHours(req: Request, res: Response) {
+        const { id } = req.params
+        const { service, date } = req.query
+
+        return doctorController.handle(res, () =>
+            getDoctorAvailabilityHours(Number(id), Number(service), date as string)
+        )
+    }
+
 
     //#region Schedules
     static createSchedule(req: Request, res: Response) {

@@ -166,3 +166,18 @@ export interface IAppointment {
     duration: number
 }
 
+export interface IAppointment {
+    id: number,
+    clinicId: number,
+    doctorId: number,
+    patientId: number,
+    serviceId: number,
+    date: string,
+    startTime: string,
+    endTime: string,
+    status: string,
+    notes: string,
+    createdAt: string,
+    doctor: IDoctor,
+    service: IService
+}

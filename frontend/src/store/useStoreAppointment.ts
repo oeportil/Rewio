@@ -6,7 +6,9 @@ type StoreAppointment = {
     appointment: IAppointment
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateAppointment: (appointment: any) => void
-    cleanAppointment: () => void
+    cleanAppointment: () => void,
+    appointments: IAppointment[]
+    setAppointments: (apments: IAppointment[]) => void
 }
 
 const InitVal: IAppointment = {
@@ -18,10 +20,13 @@ const InitVal: IAppointment = {
     duration: 0
 }
 
+
 export const useStoreAppointment = create<StoreAppointment>()(
     persist(
         (set) => ({
             appointment: InitVal,
+            appointments: [],
+            setAppointments: (apments) => set(() => ({ appointments: apments })),
             updateAppointment: (appointment) => set((state) => ({
                 appointment: {
                     ...state.appointment,

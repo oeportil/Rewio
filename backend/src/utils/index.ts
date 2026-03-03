@@ -193,3 +193,11 @@ export const getUserByToken = (req: Request): { id: number, email: string, name:
 }
 
 // { id: findUser.id, email: findUser.email, name: findUser.name, role: findUser.role }
+
+
+export async function assertClinicOwnership(clinicId: number, userId: number) {
+    const clinic = await prisma.clinic.findFirst({
+        where: { id: clinicId, ownerId: userId }
+    })
+    if (!clinic) throw new Error("No tienes permiso sobre esta clínica")
+}

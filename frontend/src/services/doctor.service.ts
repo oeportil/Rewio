@@ -25,7 +25,19 @@ export const getApiDoctorById = async (idClinic: number, idDoctor: number) => {
     return getBase({ page: 1, limit: 1, search: "", errorfun: () => { } }, `/doctor/${idClinic}/${idDoctor}`);
 }
 
-export const getApiAvailability = async (idDoctor: number, idService: number, date: string = "") => {
+export const getApiAvailabilityHours = async (idDoctor: number, idService: number, date: string = "") => {
     return getBase({ page: 1, limit: 1, search: "", errorfun: () => { } },
-        `/doctor/${idDoctor}/availability?date=${date}&service=${idService}&`);
+        `/doctor/${idDoctor}/availability/hours?date=${date}&service=${idService}&`);
 }
+
+export const getApiAvailabilityDays = async (
+    idDoctor: number,
+    idService: number,
+    year: number,
+    month: number
+) => {
+    return getBase(
+        { page: 1, limit: 1, search: "", errorfun: () => { } },
+        `/doctor/${idDoctor}/availability/days?service=${idService}&year=${year}&month=${month}&`
+    );
+};

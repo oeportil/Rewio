@@ -1,14 +1,7 @@
 import { prisma } from "../config/client"
-import { getUserByToken, paginateAdvanced } from "../utils"
+import { assertClinicOwnership, getUserByToken, paginateAdvanced } from "../utils"
 import { Request } from "express"
 
-//helper para este servicio
-async function assertClinicOwnership(clinicId: number, userId: number) {
-    const clinic = await prisma.clinic.findFirst({
-        where: { id: clinicId, ownerId: userId }
-    })
-    if (!clinic) throw new Error("No tienes permiso sobre esta clínica")
-}
 
 
 export const createService = async (req: Request) => {
