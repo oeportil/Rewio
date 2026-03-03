@@ -7,6 +7,8 @@ import FormButton from "@/components/shared/forms/FormButton";
 import { BiSave } from "react-icons/bi";
 import FormInput from "@/components/shared/forms/FormInput";
 import DoctorSection from "./doctor/DoctorSection";
+import { FaArrowRotateLeft } from "react-icons/fa6";
+import { Tooltip } from "antd";
 
 interface Props {
   clinic: IClinic | null;
@@ -152,9 +154,16 @@ const Owner = ({ clinic }: Props) => {
           animate={{ opacity: 1, x: 0 }}
           className="bg-white p-6 rounded-2xl shadow-md"
         >
-          <h2 className="text-lg font-bold mb-4 text-slate-900">
-            📅 Citas de Hoy
-          </h2>
+          <div className="flex justify-between items-center ">
+            <h2 className="text-lg font-bold mb-4 text-slate-900">
+              📅 Citas de Hoy
+            </h2>
+            <Tooltip title="Recargar citas">
+              <button className="cursor-pointer">
+                <FaArrowRotateLeft />
+              </button>
+            </Tooltip>
+          </div>
 
           <div className="space-y-3">
             {/* Esto luego lo mapeas dinámico */}
