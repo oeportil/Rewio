@@ -5,7 +5,9 @@ import { calculateEndTime } from "@/utils/index";
 
 const ConfirmAppointment = () => {
   const { appointment } = useStoreAppointment();
-  const { saveAppointment, contextHolder } = useAppointment();
+  const { saveAppointment, contextHolder } = useAppointment({
+    type: "patient",
+  });
   return (
     <Dialog id="confirmAppointment" buttonContent="Confirmar Cita">
       {contextHolder}

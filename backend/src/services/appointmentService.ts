@@ -2,7 +2,7 @@ import { Request } from "express"
 import { prisma } from "../config/client"
 import { Appointment } from "../generated/prisma"
 import { calculateEndTime, hasCollision, isWithinDoctorSchedule } from "./appointmentRule"
-import { assertClinicOwnership, getUserByToken, paginateAdvanced } from "../utils"
+import { assertClinicOwnership, canReprogram, getUserByToken, paginateAdvanced } from "../utils"
 import { UNEXPECTED_ERROR } from "../consts"
 
 export const createAppointment = async (req: Request) => {
@@ -119,7 +119,7 @@ export const getClinicAppointments = async (
     const { id: clinicId } = req.params
     const { date } = req.query
 
-    const where: any = { clinicId }
+    const where: any = { clinicId: +clinicId }
 
     if (date) where.date = new Date(date as string)
 
@@ -164,7 +164,7 @@ export const getMyAppointments = async (req: Request) => {
             status: req.query.status,
             patientId: patient.id
         },
-        orderBy: { date: "desc" },
+        orderBy: { id: "desc" },
         include: {
             doctor: { include: { user: true } },
             // clinic: true,
@@ -245,6 +245,8 @@ export const rescheduleAppointment = async (req: Request) => {
     const { id } = req.params;
     const { newDate, newStartTime } = req.body;
     const user = getUserByToken(req);
+
+    if (!canReprogram(req.body.newDate)) throw new Error("No puedes reprogramar esta cita");
 
     // Obtener paciente
     const patient = await prisma.patient.findFirst({ where: { userId: user.id } });

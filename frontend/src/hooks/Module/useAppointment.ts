@@ -1,15 +1,15 @@
 import { useStoreAppointment } from "@/store/useStoreAppointment"
 import useNotification from "../logic/useNotification";
-import { createApiAppointment, getApiMyAppointment } from "@/services/appointment.service";
+import { cancellApiAppointment, createApiAppointment, doneApiAppointment, getApiClinicAppointment, getApiDoctorAppointment, getApiMyAppointment } from "@/services/appointment.service";
 import usePagination from "../logic/usePagination";
 import { useEffect, useState } from "react";
-import type { apiTpag, IAppointment, Tpagination } from "@/types/index";
+import type { apiTpag, IAppointment, IClinicAppointment, Tpagination } from "@/types/index";
 
 
-export const useAppointment = () => {
-    const { appointment, cleanAppointment } = useStoreAppointment();
+export const useAppointment = ({ type, id, now = true }: { type: "doctor" | "patient" | "clinic", id?: number, now?: boolean }) => {
+    const { appointment, cleanAppointment, setAppointments } = useStoreAppointment();
     const { contextHolder, showNotification } = useNotification();
-    const { handlePag, pagfunc, values } = usePagination<IAppointment>("data");
+    const { handlePag, pagfunc, values } = usePagination<IAppointment | IClinicAppointment>("data");
     const [pag, setPag] = useState<apiTpag>({
         errorfun: showNotification,
         limit: 10,
@@ -19,8 +19,10 @@ export const useAppointment = () => {
     });
 
     const getAppointments = async () => {
-        const response = await getApiMyAppointment(pag)
-        pagfunc(response.value)
+        const response = type == "patient" ? await getApiMyAppointment(pag) : type == "clinic" ?
+            await getApiClinicAppointment(pag, id!, now ? new Date().toISOString().split('T')[0] : undefined) : await getApiDoctorAppointment(pag, id!);
+        await pagfunc(response.value)
+        setAppointments(values)
     }
 
     const handlePagination = (values: Tpagination) => {
@@ -41,6 +43,34 @@ export const useAppointment = () => {
         }
     }
 
+
+    const cancellAppointment = async (id: number) => {
+        const response = await cancellApiAppointment({ id, data: {}, errorfun: showNotification });
+        if (response && response.status) {
+            getAppointments()
+        } else {
+            showNotification({ type: "error", content: response.msg })
+        }
+    }
+
+    const doneAppointment = async (id: number) => {
+        const response = await doneApiAppointment({ id, data: {}, errorfun: showNotification });
+        if (response && response.status) {
+            getAppointments()
+        } else {
+            showNotification({ type: "error", content: response.msg })
+        }
+    }
+
+    const confirmAppointment = async (id: number) => {
+        const response = await doneApiAppointment({ id, data: {}, errorfun: showNotification });
+        if (response && response.status) {
+            getAppointments()
+        } else {
+            showNotification({ type: "error", content: response.msg })
+        }
+    }
+
     useEffect(() => {
         getAppointments()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,6 +82,11 @@ export const useAppointment = () => {
         contextHolder,
         setPag,
         handlePagination,
-        values
+        values,
+        cancellAppointment,
+        doneAppointment,
+        confirmAppointment,
+        getAppointments,
+        pag
     }
 }

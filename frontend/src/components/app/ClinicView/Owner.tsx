@@ -1,4 +1,4 @@
-import type { IClinic } from "@/types/index";
+import type { IClinic, IClinicAppointment } from "@/types/index";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import CRUDServices from "./service/CRUDServices";
@@ -9,6 +9,8 @@ import FormInput from "@/components/shared/forms/FormInput";
 import DoctorSection from "./doctor/DoctorSection";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import { Tooltip } from "antd";
+import { useAppointment } from "@/hooks/Module/useAppointment";
+import Appointments from "./doctor/Appointments";
 
 interface Props {
   clinic: IClinic | null;
@@ -19,6 +21,21 @@ const Owner = ({ clinic }: Props) => {
   const { saveClinic, setEditingClinic, contextHolder } = useClinic({
     fetchData: false,
     own: true,
+  });
+  const { values, getAppointments, pag, handlePagination } = useAppointment({
+    type: "clinic",
+    id: clinic?.id,
+  });
+
+  const {
+    getAppointments: getAppointmentsHistory,
+    values: historyValues,
+    pag: pagHistory,
+    handlePagination: handlePaginationHistory,
+  } = useAppointment({
+    type: "clinic",
+    id: clinic?.id,
+    now: false,
   });
 
   useEffect(() => {
@@ -58,7 +75,6 @@ const Owner = ({ clinic }: Props) => {
           </button>
         </div>
       </motion.div>
-
       {/* Info Cards */}
       <form
         onSubmit={saveClinic}
@@ -143,7 +159,6 @@ const Owner = ({ clinic }: Props) => {
           </div>
         )}
       </form>
-
       {/* Doctors + Appointments */}
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Doctors Section */}
@@ -159,22 +174,49 @@ const Owner = ({ clinic }: Props) => {
               📅 Citas de Hoy
             </h2>
             <Tooltip title="Recargar citas">
-              <button className="cursor-pointer">
+              <button
+                className="cursor-pointer"
+                onClick={() => getAppointments()}
+              >
                 <FaArrowRotateLeft />
               </button>
             </Tooltip>
           </div>
-
-          <div className="space-y-3">
-            {/* Esto luego lo mapeas dinámico */}
-            <div className="p-3 bg-slate-50 rounded-lg hover:bg-sky-50 transition">
-              <p className="font-semibold">Paciente: María López</p>
-              <p className="text-sm text-slate-500">10:30 AM - Dr. Pérez</p>
-            </div>
-          </div>
+          {Appointments(
+            values as IClinicAppointment[],
+            true,
+            pag,
+            handlePagination,
+          )}
         </motion.div>
       </div>
       {clinic && clinic.id && <CRUDServices clinicId={clinic?.id ?? 0} />}
+
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="bg-white p-6 rounded-2xl shadow-md mt-4 w-full"
+      >
+        <div className="flex justify-between items-center w-full">
+          <h2 className="text-lg font-bold mb-4 text-slate-900">
+            📅 Historial de citas
+          </h2>
+          <Tooltip title="Recargar citas">
+            <button
+              className="cursor-pointer"
+              onClick={() => getAppointmentsHistory()}
+            >
+              <FaArrowRotateLeft />
+            </button>
+          </Tooltip>
+        </div>
+        {Appointments(
+          historyValues as IClinicAppointment[],
+          false,
+          pagHistory,
+          handlePaginationHistory,
+        )}
+      </motion.div>
     </div>
   );
 };

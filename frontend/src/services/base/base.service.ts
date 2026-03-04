@@ -5,8 +5,15 @@ import axios from "axios";
 
 
 export const getBase = async ({ page, limit, search, errorfun }: apiTpag, endpoint: string) => {
+    // ?page=${page}&limit=${limit}&search=${search}
     try {
-        const response = await instance.get(`${endpoint}?page=${page}&limit=${limit}&search=${search}`);
+        const response = await instance.get(`${endpoint}`, {
+            params: {
+                page,
+                limit,
+                search
+            }
+        });
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {

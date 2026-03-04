@@ -19,8 +19,14 @@ const Patient = ({ clinic }: Props) => {
     clinicId: clinic!.id,
   });
 
-  const { updateAppointment: store, appointment } = useStoreAppointment();
-  const { values } = useAppointment();
+  const {
+    updateAppointment: store,
+    appointment,
+    appointments,
+  } = useStoreAppointment();
+  const { cancellAppointment, pag, handlePagination } = useAppointment({
+    type: "patient",
+  });
 
   if (!clinic) {
     return (
@@ -53,13 +59,18 @@ const Patient = ({ clinic }: Props) => {
       </motion.div>
 
       {/* CITAS */}
-      <Appointments appointments={values} />
+      <Appointments
+        appointments={appointments}
+        cancellAppointment={cancellAppointment}
+        pag={pag}
+        handlePagination={handlePagination}
+      />
 
       {/* SERVICIOS */}
       <section className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-lg font-bold mb-6">🛠 Servicios Disponibles</h2>
 
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-3 gap-4 max-h-72 overflow-y-auto">
           {services.map((service) => (
             <div
               key={service.id}

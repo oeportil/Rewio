@@ -181,3 +181,21 @@ export interface IAppointment {
     doctor: IDoctor,
     service: IService
 }
+
+export interface IClinicAppointment extends IAppointment {
+    patient: IPatient
+}
+
+
+export interface IPatient {
+    id: number,
+    userId: number,
+    user: IUser,
+    birthdate: string | null,
+    clinicId: number,
+    phone: string | null,
+    notes: string | null,
+    createdAt: string,
+    updatedAt: string
+}
+

@@ -17,7 +17,15 @@ const InitVal: IAppointment = {
     notes: "",
     startTime: "",
     serviceId: 0,
-    duration: 0
+    duration: 0,
+    id: 0,
+    clinicId: 0,
+    patientId: 0,
+    endTime: '',
+    status: '',
+    createdAt: '',
+    doctor: {} as never,
+    service: {} as never
 }
 
 

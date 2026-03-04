@@ -1,9 +1,9 @@
-import type { apiTdelete, apiTpag, apiTpatchAndPut, apiTpost } from "../types";
-import { deleteBase, getBase, postBase, putBase } from "./base/base.service";
+import type { apiTpag, apiTpatchAndPut, apiTpost } from "../types";
+import { getBase, postBase, putBase } from "./base/base.service";
 
 
-export const getApiClinicAppointment = async ({ page, limit, search, errorfun }: apiTpag, clinicId: number) => {
-    return getBase({ page, limit, search, errorfun }, `/appointment/${clinicId}/clinic`);
+export const getApiClinicAppointment = async ({ page, limit, search, errorfun }: apiTpag, clinicId: number, date?: string) => {
+    return getBase({ page, limit, search, errorfun }, `/appointment/${clinicId}/clinic${date ? `?date=${date}` : ''}`);
 }
 
 
@@ -19,10 +19,15 @@ export const createApiAppointment = async ({ data, errorfun }: apiTpost) => {
     return postBase({ data, errorfun }, "/appointment");
 }
 
-export const updateApiService = async ({ data, errorfun, id }: apiTpatchAndPut) => {
-    return putBase({ data, errorfun, id }, "/service");
+export const cancellApiAppointment = async ({ data, errorfun, id }: apiTpatchAndPut) => {
+    return putBase({ data, errorfun }, `/appointment/${id}/cancell`);
 }
 
-export const deleteApiService = async ({ errorfun, id }: apiTdelete) => {
-    return deleteBase({ errorfun, id }, "/service");
+export const doneApiAppointment = async ({ data, errorfun, id }: apiTpatchAndPut) => {
+    return putBase({ data, errorfun }, `/appointment/${id}/done`);
 }
+
+export const confirmApiAppointment = async ({ data, errorfun, id }: apiTpatchAndPut) => {
+    return putBase({ data, errorfun }, `/appointment/${id}/confirm`);
+}
+

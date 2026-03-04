@@ -201,3 +201,11 @@ export async function assertClinicOwnership(clinicId: number, userId: number) {
     })
     if (!clinic) throw new Error("No tienes permiso sobre esta clínica")
 }
+
+export const canReprogram = (date: string) => {
+    const today = new Date()
+    const appointmentDate = new Date(date)
+    const diffInMs = appointmentDate.getTime() - today.getTime()
+    const diffInHours = diffInMs / (1000 * 60 * 60)
+    return diffInHours >= 48
+}

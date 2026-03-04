@@ -62,3 +62,12 @@ export const addMonthAndYear = (day: number) => {
 
     return result.toISOString().split("T")[0]
 }
+
+export const canReprogram = (date: string) => {
+    const today = new Date()
+    const appointmentDate = new Date(date)
+    const diffInMs = appointmentDate.getTime() - today.getTime()
+    const diffInHours = diffInMs / (1000 * 60 * 60)
+    return diffInHours >= 48
+
+}
