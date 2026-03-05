@@ -1,3 +1,4 @@
+import Doctor from "@/components/app/ClinicView/Doctor";
 import Owner from "@/components/app/ClinicView/Owner";
 import Patient from "@/components/app/ClinicView/Patient";
 import ModulesLayout from "@/components/Layouts/ModulesLayout";
@@ -20,7 +21,13 @@ const ClinicView = () => {
       {clinic.id && (
         <>
           {user?.role != "patient" ? (
-            <Owner clinic={clinic} />
+            <>
+              {user?.role === "owner" ? (
+                <Owner clinic={clinic} />
+              ) : (
+                <Doctor clinic={clinic} />
+              )}
+            </>
           ) : (
             <Patient clinic={clinic} />
           )}

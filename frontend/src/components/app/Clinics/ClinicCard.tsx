@@ -2,6 +2,7 @@ import FormButton from "@/components/shared/forms/FormButton";
 import type { IClinic } from "@/types/index";
 import { BiPencil } from "react-icons/bi";
 import { useNavigate } from "react-router";
+import Imagent from "@/assets/imagent.jpg";
 
 const ClinicCard = ({
   clinic,
@@ -31,7 +32,7 @@ const ClinicCard = ({
         {clinic.logo && (
           <div className="h-14 w-14 rounded-lg bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0">
             <img
-              src={clinic.logo}
+              src={clinic.logo ? clinic.logo : Imagent}
               alt={clinic.name}
               className="object-contain h-full w-full p-2"
             />
@@ -45,6 +46,7 @@ const ClinicCard = ({
           </h3>
           <p className="text-xs text-zinc-500 truncate">{clinic.email}</p>
           <p className="text-xs text-zinc-500 truncate">{clinic.phone}</p>
+          <p className="text-xs text-zinc-500 truncate">{clinic.address}</p>
 
           {role != "patient" && (
             <div className="flex items-center justify-between mt-2">

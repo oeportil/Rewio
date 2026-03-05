@@ -71,7 +71,7 @@ const Register = () => {
               />
             </FormGroup>
             <FormGroup className="w-full">
-              <label htmlFor="role" className="text-sm font-bold text-sky-950">
+              <label htmlFor="role" className="text-sm text-sky-950">
                 Selecciona un rol{" "}
               </label>
               <FormSelect

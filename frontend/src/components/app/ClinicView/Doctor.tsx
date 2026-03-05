@@ -1,12 +1,7 @@
 import type { IClinic, IClinicAppointment } from "@/types/index";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import CRUDServices from "./service/CRUDServices";
+import { useEffect } from "react";
 import useClinic from "@/hooks/Module/useClinic";
-import FormButton from "@/components/shared/forms/FormButton";
-import { BiSave } from "react-icons/bi";
-import FormInput from "@/components/shared/forms/FormInput";
-import DoctorSection from "./doctor/DoctorSection";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import { Tooltip } from "antd";
 import { useAppointment } from "@/hooks/Module/useAppointment";
@@ -17,8 +12,7 @@ interface Props {
   clinic: IClinic | null;
 }
 
-const Owner = ({ clinic }: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
+const Doctor = ({ clinic }: Props) => {
   const { saveClinic, setEditingClinic, contextHolder } = useClinic({
     fetchData: false,
     own: true,
@@ -69,16 +63,6 @@ const Owner = ({ clinic }: Props) => {
             </h1>
           </div>
         </div>
-
-        <div className="md:m-0 my-4">
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="bg-sky-600 text-white px-5 py-2 rounded-lg 
-          font-semibold hover:bg-sky-800 transition-all duration-300 cursor-pointer"
-          >
-            {isEditing ? "Guardar Cambios" : "Editar Información"}
-          </button>
-        </div>
       </motion.div>
       {/* Info Cards */}
       <form
@@ -92,20 +76,7 @@ const Owner = ({ clinic }: Props) => {
           className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl 
             transition-all duration-300"
         >
-          {isEditing ? (
-            <FormInput
-              type="text"
-              name="address"
-              htmlFor="address"
-              id="address"
-              labelText="Dirección"
-              defaultValue={clinic?.address}
-            />
-          ) : (
-            <p className="mt-2 font-semibold text-slate-800">
-              {clinic?.address}
-            </p>
-          )}
+          <p className="mt-2 font-semibold text-slate-800">{clinic?.address}</p>
         </motion.div>
 
         <motion.div
@@ -115,18 +86,7 @@ const Owner = ({ clinic }: Props) => {
           className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl 
             transition-all duration-300"
         >
-          {isEditing ? (
-            <FormInput
-              type="email"
-              name="email"
-              htmlFor="email"
-              id="email"
-              labelText="Email"
-              defaultValue={clinic?.email}
-            />
-          ) : (
-            <p className="mt-2 font-semibold text-slate-800">{clinic?.email}</p>
-          )}
+          <p className="mt-2 font-semibold text-slate-800">{clinic?.email}</p>
         </motion.div>
 
         <motion.div
@@ -136,38 +96,11 @@ const Owner = ({ clinic }: Props) => {
           className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl 
             transition-all duration-300"
         >
-          {isEditing ? (
-            <FormInput
-              type="tel"
-              name="phone"
-              htmlFor="phone"
-              id="phone"
-              labelText="Teléfono"
-              defaultValue={clinic?.phone}
-            />
-          ) : (
-            <p className="mt-2 font-semibold text-slate-800">{clinic?.phone}</p>
-          )}
+          <p className="mt-2 font-semibold text-slate-800">{clinic?.phone}</p>
         </motion.div>
-        {isEditing && (
-          <div className="col-span-3 flex justify-end">
-            <FormButton
-              type="submit"
-              woback={false}
-              className="w-fit bg-sky-500 text-white hover:bg-sky-700
-          p-1 rounded-sm 
-       transition ease-in-out duration-300 
-        cursor-pointer text-center flex justify-center items-center gap-1"
-            >
-              <BiSave size={30} />
-            </FormButton>
-          </div>
-        )}
       </form>
       {/* Doctors + Appointments */}
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Doctors Section */}
-        {clinic && clinic.id != 0 && <DoctorSection clinicId={clinic.id} />}
+      <div className="grid">
         {/* Appointments Section (colocarlo en un componente aparte) */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
@@ -196,8 +129,6 @@ const Owner = ({ clinic }: Props) => {
           )}
         </motion.div>
       </div>
-      {clinic && clinic.id && <CRUDServices clinicId={clinic?.id ?? 0} />}
-
       <motion.div
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
@@ -228,4 +159,4 @@ const Owner = ({ clinic }: Props) => {
   );
 };
 
-export default Owner;
+export default Doctor;

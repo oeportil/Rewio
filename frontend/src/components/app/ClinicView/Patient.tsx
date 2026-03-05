@@ -6,6 +6,7 @@ import AvailableSchedules from "./patient/AvailableSchedules";
 import { useStoreAppointment } from "@/store/useStoreAppointment";
 import { useAppointment } from "@/hooks/Module/useAppointment";
 import Appointments from "./patient/Appointments";
+import Imagent from "@/assets/imagent.jpg";
 
 interface Props {
   clinic: IClinic | null;
@@ -47,7 +48,7 @@ const Patient = ({ clinic }: Props) => {
       >
         <div className="flex items-center gap-4">
           <img
-            src={clinic.logo}
+            src={clinic.logo ? clinic.logo : Imagent}
             alt={clinic.name}
             className="w-16 h-16 rounded-xl shadow-md object-cover"
           />

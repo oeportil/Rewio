@@ -55,7 +55,9 @@ const Appointments = (
         );
       })
     ) : (
-      <p className="text-center text-slate-500">No hay citas para hoy</p>
+      <p className="text-center text-slate-500">
+        {now ? "No hay citas para hoy" : "No hay citas en el historial"}
+      </p>
     )}
     <PaginationData
       current={pag.page}
