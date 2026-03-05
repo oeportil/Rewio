@@ -22,16 +22,19 @@ const Owner = ({ clinic }: Props) => {
     fetchData: false,
     own: true,
   });
-  const { values, getAppointments, pag, handlePagination } = useAppointment({
-    type: "clinic",
-    id: clinic?.id,
-  });
+  const { values, getAppointments, pag, handlePagination, confirmAppointment } =
+    useAppointment({
+      type: "clinic",
+      id: clinic?.id,
+    });
 
   const {
     getAppointments: getAppointmentsHistory,
     values: historyValues,
     pag: pagHistory,
     handlePagination: handlePaginationHistory,
+    confirmAppointment: confAppHist,
+    contextHolder: contextHolderHistory,
   } = useAppointment({
     type: "clinic",
     id: clinic?.id,
@@ -44,8 +47,9 @@ const Owner = ({ clinic }: Props) => {
   }, [clinic]);
 
   return (
-    <div className="p-8 bg-slate-50 min-h-screen">
+    <div className="p-2 bg-slate-50 min-h-screen">
       {contextHolder}
+      {contextHolderHistory}
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -187,6 +191,7 @@ const Owner = ({ clinic }: Props) => {
             true,
             pag,
             handlePagination,
+            confirmAppointment,
           )}
         </motion.div>
       </div>
@@ -215,6 +220,7 @@ const Owner = ({ clinic }: Props) => {
           false,
           pagHistory,
           handlePaginationHistory,
+          confAppHist,
         )}
       </motion.div>
     </div>

@@ -24,7 +24,7 @@ const Patient = ({ clinic }: Props) => {
     appointment,
     appointments,
   } = useStoreAppointment();
-  const { cancellAppointment, pag, handlePagination } = useAppointment({
+  const { cancellAppointment, pag, handlePagination, values } = useAppointment({
     type: "patient",
   });
 
@@ -60,7 +60,7 @@ const Patient = ({ clinic }: Props) => {
 
       {/* CITAS */}
       <Appointments
-        appointments={appointments}
+        appointments={appointments.length != 0 ? appointments : values}
         cancellAppointment={cancellAppointment}
         pag={pag}
         handlePagination={handlePagination}

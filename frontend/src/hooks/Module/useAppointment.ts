@@ -1,6 +1,6 @@
 import { useStoreAppointment } from "@/store/useStoreAppointment"
 import useNotification from "../logic/useNotification";
-import { cancellApiAppointment, createApiAppointment, doneApiAppointment, getApiClinicAppointment, getApiDoctorAppointment, getApiMyAppointment } from "@/services/appointment.service";
+import { cancellApiAppointment, confirmApiAppointment, createApiAppointment, doneApiAppointment, getApiClinicAppointment, getApiDoctorAppointment, getApiMyAppointment } from "@/services/appointment.service";
 import usePagination from "../logic/usePagination";
 import { useEffect, useState } from "react";
 import type { apiTpag, IAppointment, IClinicAppointment, Tpagination } from "@/types/index";
@@ -63,7 +63,7 @@ export const useAppointment = ({ type, id, now = true }: { type: "doctor" | "pat
     }
 
     const confirmAppointment = async (id: number) => {
-        const response = await doneApiAppointment({ id, data: {}, errorfun: showNotification });
+        const response = await confirmApiAppointment({ id, data: {}, errorfun: showNotification });
         if (response && response.status) {
             getAppointments()
         } else {

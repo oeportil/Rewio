@@ -8,6 +8,7 @@ const Appointments = (
   now: boolean = true,
   pag: apiTpag,
   handlePagination: (values: Tpagination) => void,
+  confirmFunc: (id: number) => void,
 ) => (
   <div className="space-y-3">
     {/* Esto se mapea dinámico */}
@@ -38,6 +39,7 @@ const Appointments = (
                 <FormButton
                   type="button"
                   woback={false}
+                  click={() => confirmFunc(a.id)}
                   className="w-fit bg-green-500 text-white hover:bg-green-700
                           p-1 rounded-sm
                         transition ease-in-out duration-300
