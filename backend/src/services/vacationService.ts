@@ -53,10 +53,7 @@ export const createVacation = async (req: Request) => {
 }
 
 export const getVacationsByDoctor = async (req: Request) => {
-    const user = getUserByToken(req)
     const doctorId = Number(req.params.id)
-
-    await assertDoctorOwnership(doctorId, user.id)
 
     return prisma.doctorVacation.findMany({
         where: { doctorId },

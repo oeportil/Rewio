@@ -7,6 +7,10 @@ import { Tooltip } from "antd";
 import { useAppointment } from "@/hooks/Module/useAppointment";
 import Appointments from "./doctor/Appointments";
 import Imagent from "@/assets/imagent.jpg";
+import useDoctor from "@/hooks/Module/useDoctor";
+import { useUserStore } from "@/store/useUserStore";
+import DoctorSchedules from "../DoctorView/DoctorSchedules";
+import BlocksAndVacations from "../DoctorView/BlocksAndVacations";
 
 interface Props {
   clinic: IClinic | null;
@@ -17,11 +21,25 @@ const Doctor = ({ clinic }: Props) => {
     fetchData: false,
     own: true,
   });
-  const { values, getAppointments, pag, handlePagination, confirmAppointment } =
-    useAppointment({
-      type: "clinic",
-      id: clinic?.id,
-    });
+  const user = useUserStore((state) => state.user);
+  // Para manejar las citas del doctor
+  const {
+    values,
+    getAppointments,
+    pag,
+    handlePagination,
+    confirmAppointment,
+    doneAppointment,
+  } = useAppointment({
+    type: "doctor",
+    id: clinic?.id,
+  });
+
+  const { doctor, getDoctorByClinicAndId } = useDoctor({
+    fetchData: false,
+    clinicId: clinic?.id,
+    type: "all",
+  });
 
   const {
     getAppointments: getAppointmentsHistory,
@@ -30,14 +48,16 @@ const Doctor = ({ clinic }: Props) => {
     handlePagination: handlePaginationHistory,
     confirmAppointment: confAppHist,
     contextHolder: contextHolderHistory,
+    doneAppointment: doneAppHist,
   } = useAppointment({
-    type: "clinic",
+    type: "doctor",
     id: clinic?.id,
     now: false,
   });
 
   useEffect(() => {
     setEditingClinic(clinic);
+    getDoctorByClinicAndId(user?.id || 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clinic]);
 
@@ -49,18 +69,28 @@ const Doctor = ({ clinic }: Props) => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="md:flex justify-between items-center mb-4 "
+        className="md:flex justify-between items-center mb-4 w-full"
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 w-full">
           <img
             src={clinic?.logo ? clinic?.logo : Imagent}
             alt={clinic?.name}
             className="w-16 h-16 rounded-xl shadow-md object-cover"
           />
-          <div>
+          <div className="flex justify-between items-center w-full">
             <h1 className="text-2xl font-bold text-slate-900">
               {clinic?.name}
             </h1>
+            <div className="flex items-center flex-row-reverse gap-1">
+              <p className="text-xs text-gray-500">Color Asignado</p>
+              <div
+                className="h-4 w-4 rounded-full"
+                style={{
+                  backgroundColor:
+                    doctor && doctor.color ? doctor.color : "transparent",
+                }}
+              ></div>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -126,6 +156,8 @@ const Doctor = ({ clinic }: Props) => {
             pag,
             handlePagination,
             confirmAppointment,
+            doneAppointment,
+            true,
           )}
         </motion.div>
       </div>
@@ -153,8 +185,19 @@ const Doctor = ({ clinic }: Props) => {
           pagHistory,
           handlePaginationHistory,
           confAppHist,
+          doneAppHist,
+          true,
         )}
       </motion.div>
+      <div className="my-4 space-y-4">
+        {doctor && doctor.id && (
+          <>
+            <DoctorSchedules idDoctor={doctor.id} Idc={clinic?.id} />
+
+            <BlocksAndVacations idDoctor={doctor.id} />
+          </>
+        )}
+      </div>
     </div>
   );
 };

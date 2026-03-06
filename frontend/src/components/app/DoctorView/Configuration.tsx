@@ -31,7 +31,7 @@ const Configuration = ({ form, setForm, id, updateDoctor }: Prop) => {
         </div>
 
         <div>
-          <label className="text-sm text-slate-600">Color en calendario</label>
+          <label className="text-sm text-slate-600">Color en Citas</label>
           <div className="flex items-center gap-4 mt-2">
             <input
               type="color"

@@ -38,7 +38,7 @@ model Clinic {
   phone   String
   email   String  @unique
   address String
-  logo    String
+  logo    String?
   status  Boolean
   ownerId Int
 

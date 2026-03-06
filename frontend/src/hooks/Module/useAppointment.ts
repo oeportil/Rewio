@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import type { apiTpag, IAppointment, IClinicAppointment, Tpagination } from "@/types/index";
 
 
-export const useAppointment = ({ type, id, now = true }: { type: "doctor" | "patient" | "clinic", id?: number, now?: boolean }) => {
+export const useAppointment = ({ type, id, now = true, doctorId }:
+    { type: "doctor" | "patient" | "clinic", id?: number, now?: boolean, doctorId?: number }) => {
     const { appointment, cleanAppointment, setAppointments } = useStoreAppointment();
     const { contextHolder, showNotification } = useNotification();
     const { handlePag, pagfunc, values } = usePagination<IAppointment | IClinicAppointment>("data");
@@ -20,7 +21,8 @@ export const useAppointment = ({ type, id, now = true }: { type: "doctor" | "pat
 
     const getAppointments = async () => {
         const response = type == "patient" ? await getApiMyAppointment(pag) : type == "clinic" ?
-            await getApiClinicAppointment(pag, id!, now ? new Date().toISOString().split('T')[0] : undefined) : await getApiDoctorAppointment(pag, id!);
+            await getApiClinicAppointment(pag, id!, now ? new Date().toISOString().split('T')[0] : undefined)
+            : await getApiDoctorAppointment(pag, id!, now ? new Date().toISOString().split('T')[0] : undefined, doctorId);
         await pagfunc(response.value)
         setAppointments(values)
     }

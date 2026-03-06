@@ -7,8 +7,8 @@ export const getApiClinicAppointment = async ({ page, limit, search, errorfun }:
 }
 
 
-export const getApiDoctorAppointment = async ({ page, limit, search, errorfun }: apiTpag, doctor: number) => {
-    return getBase({ page, limit, search, errorfun }, `/appointment/${doctor}/doctor`);
+export const getApiDoctorAppointment = async ({ page, limit, search, errorfun }: apiTpag, doctor: number, date?: string, doctorId?: number) => {
+    return getBase({ page, limit, search, errorfun }, `/appointment/${doctor}/doctor?${date ? `date=${date}` : ''}${doctorId ? `&doctorId=${doctorId}` : ''}`);
 }
 
 export const getApiMyAppointment = async ({ page, limit, search, errorfun }: apiTpag) => {

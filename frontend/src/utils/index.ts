@@ -15,7 +15,7 @@ export function formDataKeysAndValues<T extends Record<string, string>>(
 
 export function formatDate(date: string | Date) {
     const d = new Date(date)
-
+    d.setDate(d.getDate() + 1) // Ajuste para corregir la fecha
     return d.toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",

@@ -81,15 +81,22 @@ export const getDoctorAppointments = async (
     req: Request
 ) => {
     const user = getUserByToken(req)
-    const { id: doctorId } = req.params
-    const { date } = req.query
-    const where: any = { doctorId }
+    const { id: clinicId } = req.params
+    const { date, doctorId } = req.query
+    const where: any = { clinicId: +clinicId }
 
     if (date) {
         where.date = new Date(date as string)
     }
-
-    const doctor = await prisma.doctor.findFirst({ where: { id: +doctorId }, include: { clinic: true } })
+    const iddoc = doctorId ? Number(doctorId) : user.id
+    const doctor = await prisma.doctor.findFirst({
+        where: {
+            OR: [
+                { userId: iddoc },
+                { id: iddoc }
+            ]
+        }, include: { clinic: true }
+    })
     if (!doctor) throw new Error("doctor no existe")
 
     if (user.id != doctor.userId && doctor.clinic.ownerId != user.id) throw new Error("No posees los permisos suficientes")

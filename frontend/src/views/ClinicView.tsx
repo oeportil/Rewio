@@ -22,7 +22,7 @@ const ClinicView = () => {
         <>
           {user?.role != "patient" ? (
             <>
-              {user?.role === "owner" ? (
+              {user?.role === "clinic" ? (
                 <Owner clinic={clinic} />
               ) : (
                 <Doctor clinic={clinic} />
