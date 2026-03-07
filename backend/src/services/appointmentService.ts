@@ -206,18 +206,22 @@ export const cancelAppointment = async (req: Request) => {
 export const doneAppointment = async (req: Request) => {
     const user = getUserByToken(req)
     const { id } = req.params
-    const doctor = await prisma.doctor.findFirst({
-        where: { userId: user.id }
-    })
-    if (!doctor) throw new Error("No es doctor")
 
     const appointment = await prisma.appointment.findUnique({
         where: { id: +id }
     })
     if (!appointment) throw new Error("Cita no existe")
 
-    if (appointment.doctorId !== doctor.id)
-        throw new Error("No es tu cita")
+    const doctor = await prisma.doctor.findFirst({
+        where: { userId: user.id }
+    })
+    //debe de ser doctor propio asignado a la cita o dueño de la clinica
+    if (appointment.doctorId !== doctor?.id) {
+        const clinic = await prisma.clinic.findFirst({
+            where: { id: appointment.clinicId }
+        })
+        if (clinic?.ownerId !== user.id) throw new Error("No autorizado")
+    }
 
     return prisma.appointment.update({
         where: { id: +id },

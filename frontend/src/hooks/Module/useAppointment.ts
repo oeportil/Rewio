@@ -4,13 +4,15 @@ import { cancellApiAppointment, confirmApiAppointment, createApiAppointment, don
 import usePagination from "../logic/usePagination";
 import { useEffect, useState } from "react";
 import type { apiTpag, IAppointment, IClinicAppointment, Tpagination } from "@/types/index";
+import useModal from "@/store/useModal";
 
 
 export const useAppointment = ({ type, id, now = true, doctorId }:
     { type: "doctor" | "patient" | "clinic", id?: number, now?: boolean, doctorId?: number }) => {
-    const { appointment, cleanAppointment, setAppointments } = useStoreAppointment();
+    const { appointment, cleanAppointment } = useStoreAppointment();
     const { contextHolder, showNotification } = useNotification();
-    const { handlePag, pagfunc, values } = usePagination<IAppointment | IClinicAppointment>("data");
+    const { close } = useModal();
+    const { handlePag, pagfunc, values, pagination } = usePagination<IAppointment | IClinicAppointment>("data");
     const [pag, setPag] = useState<apiTpag>({
         errorfun: showNotification,
         limit: 10,
@@ -23,8 +25,7 @@ export const useAppointment = ({ type, id, now = true, doctorId }:
         const response = type == "patient" ? await getApiMyAppointment(pag) : type == "clinic" ?
             await getApiClinicAppointment(pag, id!, now ? new Date().toISOString().split('T')[0] : undefined)
             : await getApiDoctorAppointment(pag, id!, now ? new Date().toISOString().split('T')[0] : undefined, doctorId);
-        await pagfunc(response.value)
-        setAppointments(values)
+        pagfunc(response.value)
     }
 
     const handlePagination = (values: Tpagination) => {
@@ -38,7 +39,9 @@ export const useAppointment = ({ type, id, now = true, doctorId }:
         const { duration, ...data } = appointment
         const response = await createApiAppointment({ data, errorfun: showNotification });
         if (response && response.status) {
-
+            showNotification({ type: "success", content: "Cita agendada exitosamente" });
+            getAppointments()
+            close("confirmAppointment")
             cleanAppointment();
         } else {
             showNotification({ type: "error", content: response.msg })
@@ -89,6 +92,7 @@ export const useAppointment = ({ type, id, now = true, doctorId }:
         doneAppointment,
         confirmAppointment,
         getAppointments,
-        pag
+        pag,
+        pagination
     }
 }

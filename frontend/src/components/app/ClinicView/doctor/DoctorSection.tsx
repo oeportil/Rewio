@@ -17,6 +17,7 @@ const DoctorSection = ({ clinicId }: Prop) => {
     handlePagination,
     saveDoctor,
     setUserId,
+    pagination
   } = useDoctor({
     fetchData: true,
     type: "owners",
@@ -94,8 +95,8 @@ const DoctorSection = ({ clinicId }: Prop) => {
           </div>
         )}
         <PaginationData
-          current={pag.page}
-          total={pag.total!}
+          current={pagination.page}
+          total={pagination.total!}
           pag={pag}
           onshowsizechange={handlePagination}
         />

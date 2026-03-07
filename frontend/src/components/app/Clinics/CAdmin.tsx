@@ -15,6 +15,7 @@ const CAdmin = () => {
     openEdit,
     editingClinic,
     setEditingClinic,
+    pagination
   } = useClinic({ fetchData: true });
   return (
     <ModulesLayout title="Clinicas">
@@ -34,8 +35,8 @@ const CAdmin = () => {
         ))}
       </section>
       <PaginationData
-        current={pag.page}
-        total={pag.total!}
+        current={pagination.page}
+        total={pagination.total!}
         pag={pag}
         onshowsizechange={handlePagination}
       />

@@ -5,7 +5,7 @@ import PaginationData from "@/components/shared/PaginationData";
 import SearchInput from "@/components/shared/SearchInput";
 
 const Cclinic = () => {
-  const { values, pag, handlePagination } = useClinic({ fetchData: true });
+  const { values, pag, handlePagination, pagination } = useClinic({ fetchData: true });
 
   return (
     <ModulesLayout title="Escoge una Clinica">
@@ -19,8 +19,8 @@ const Cclinic = () => {
         ))}
       </section>
       <PaginationData
-        current={pag.page}
-        total={pag.total!}
+        current={pagination.page}
+        total={pagination.total!}
         pag={pag}
         onshowsizechange={handlePagination}
       />

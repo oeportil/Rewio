@@ -4,7 +4,7 @@ import { useState } from "react"
 
 
 type TApiResponse<T> = {
-    pagination: TPagination
+    meta: TPagination
 } & Record<string, T[]>
 
 
@@ -19,7 +19,7 @@ function usePagination<T>(key: string) {
 
     const pagfunc = (value: TApiResponse<T>) => {
         setValues(value[key])
-        setPagination(value.pagination);
+        setPagination(value.meta);
     }
 
     const handlePag = ({ limit, page, search }: Tpagination,

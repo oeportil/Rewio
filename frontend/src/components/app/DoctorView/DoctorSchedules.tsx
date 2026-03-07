@@ -4,6 +4,7 @@ import { weekdays } from "@/consts/index";
 import useDoctorSchedule from "@/hooks/logic/useDoctorSchedule";
 import { useUserStore } from "@/store/useUserStore";
 import { Select, TimePicker } from "antd";
+import dayjs from "dayjs";
 import { FaPlus } from "react-icons/fa";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { useParams } from "react-router";
@@ -22,6 +23,10 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
     contextHolder,
     setTimes,
     times,
+    scheduleEdit,
+    setScheduleEdit,
+    handleEdit,
+    deleteSchedule
   } = useDoctorSchedule({
     fetchData: true,
     idDoctor,
@@ -40,12 +45,16 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
         {user && user.role != "doctor" && (
           <div className="flex justify-end">
             <Dialog
+            cleanFunc={() => {
+              setScheduleEdit(null);
+              setTimes({ startTime: "", endTime: "", weekdays: [] })
+            }}
               id="schedule"
               buttonStyles="bg-sky-600 text-white px-4 rounded-lg hover:bg-sky-700 transition cursor-pointer mb-5 flex"
               buttonContent={"+ Agregar"}
             >
               <h2 className="text-start text-sky-700 font-semibold text-lg flex gap-1 items-center justify-start">
-                Agregar Horarios{" "}
+               {scheduleEdit ? "Editar Horario" : "Agregar Horario"}{" "}
                 <RiCalendarScheduleFill className="text-sky-500" />
               </h2>
               <form
@@ -53,7 +62,7 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
                 className="grid grid-cols-1 items-center gap-2 mt-4"
                 onSubmit={saveSchedule}
               >
-                <div className="col-span-2">
+                {!scheduleEdit && (<div className="col-span-2">
                   <label htmlFor="" className="text-sky-950 flex flex-col">
                     Seleccion de Dia
                   </label>
@@ -65,7 +74,7 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
                     options={weekdays}
                     onChange={(v) => setTimes({ ...times, weekdays: v })}
                   />
-                </div>
+                </div>)}
                 <div className="md:col-span-1 col-span-2">
                   <label htmlFor="" className="text-sky-950 flex flex-col">
                     Hora de Inicio
@@ -73,6 +82,7 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
                   <TimePicker
                     onChange={(_, time) => onChangeTime(time, "start")}
                     className="w-full"
+                    value={times.startTime ? dayjs(times.startTime, "HH:mm") : null}
                   />
                 </div>
                 <div className="md:col-span-1 col-span-2">
@@ -82,6 +92,7 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
                   <TimePicker
                     onChange={(_, time) => onChangeTime(time, "end")}
                     className="w-full"
+                    value={times.endTime ? dayjs(times.endTime, "HH:mm") : null}
                   />
                 </div>
                 <div className="mt-1 flex justify-end col-span-2">
@@ -91,7 +102,7 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
                     className="px-2 rounded-lg bg-linear-to-r from-sky-600 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center gap-2"
                   >
                     <FaPlus />
-                    Agregar
+                     {scheduleEdit ? "Editar" : "Agregar"}
                   </FormButton>
                 </div>
               </form>
@@ -113,12 +124,23 @@ const DoctorSchedules = ({ idDoctor, Idc }: Prop) => {
                 {day.startTime} - {day.endTime}
               </span>
               {user && user.role != "doctor" && (
-                <FormButton
+                <div className="flex items-center gap-2">
+                  <FormButton
+                click={() => handleEdit(day)}
                   type="button"
                   className="text-sky-600 text-sm font-semibold hover:underline"
                 >
                   Editar
                 </FormButton>
+
+                 <FormButton
+                click={() => deleteSchedule(day.id)}
+                  type="button"
+                  className="text-red-600 text-sm font-semibold hover:underline"
+                >
+                  Eliminar 
+                </FormButton>
+                </div>
               )}
             </div>
           </div>

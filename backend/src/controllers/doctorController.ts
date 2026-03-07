@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import BaseController from "./baseController";
-import { changeDoctorStatus, createDoctor, createScheduleDoctor, deleteDoctor, deleteDoctorSchedule, getDoctorById, getMyDoctors, getSchedulesByDoctorId, replaceDoctorSchedules, updateDoctor } from "../services/doctorService";
+import { changeDoctorStatus, createDoctor, createScheduleDoctor, deleteDoctor, deleteDoctorSchedule, getDoctorById, getMyDoctors, getSchedulesByDoctorId, replaceDoctorSchedules, updateDoctor, updateSchedule } from "../services/doctorService";
 import { Doctor, DoctorSchedule } from "../generated/prisma";
 import { getDoctorAvailabilityHours, getDoctorAvailableDays } from "../services/availabilityService";
 
@@ -57,6 +57,10 @@ class doctorController extends BaseController {
 
     static replaceSchedules(req: Request, res: Response) {
         doctorController.handle(res, () => replaceDoctorSchedules(req))
+    }
+
+    static editSchedule(req: Request, res: Response) {
+        doctorController.handle(res, () => updateSchedule(req))
     }
 
     static deleteSchedules(req: Request, res: Response) {

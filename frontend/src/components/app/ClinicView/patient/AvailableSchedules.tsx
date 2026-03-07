@@ -11,9 +11,10 @@ import ConfirmAppointment from "./ConfirmAppointment";
 type Prop = {
   idDoctor: number;
   idService: number;
+  saveAppointment: () => void;
 };
 
-const AvailableSchedules = ({ idDoctor, idService }: Prop) => {
+const AvailableSchedules = ({ idDoctor, idService, saveAppointment }: Prop) => {
   const {
     availableSlots,
     availableDays,
@@ -104,7 +105,7 @@ const AvailableSchedules = ({ idDoctor, idService }: Prop) => {
           Limpiar Datos
         </FormButton>
 
-        <ConfirmAppointment />
+        <ConfirmAppointment  saveAppointment={saveAppointment}/>
       </div>
 
       <div className="bg-gray-100 rounded-lg p-2 mt-2 border border-gray-200">

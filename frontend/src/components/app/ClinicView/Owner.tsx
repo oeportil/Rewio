@@ -30,6 +30,7 @@ const Owner = ({ clinic }: Props) => {
     handlePagination,
     confirmAppointment,
     doneAppointment,
+    pagination
   } = useAppointment({
     type: "clinic",
     id: clinic?.id,
@@ -43,6 +44,7 @@ const Owner = ({ clinic }: Props) => {
     confirmAppointment: confAppHist,
     contextHolder: contextHolderHistory,
     doneAppointment: doneAppHist,
+    pagination: paginationHistory
   } = useAppointment({
     type: "clinic",
     id: clinic?.id,
@@ -198,6 +200,7 @@ const Owner = ({ clinic }: Props) => {
             values as IClinicAppointment[],
             true,
             pag,
+            pagination,
             handlePagination,
             confirmAppointment,
             doneAppointment,
@@ -217,7 +220,7 @@ const Owner = ({ clinic }: Props) => {
           </h2>
           <Tooltip title="Recargar citas">
             <button
-              className="cursor-pointer"
+              className="cursor-pointer"  
               onClick={() => getAppointmentsHistory()}
             >
               <FaArrowRotateLeft />
@@ -228,6 +231,7 @@ const Owner = ({ clinic }: Props) => {
           historyValues as IClinicAppointment[],
           false,
           pagHistory,
+          paginationHistory,
           handlePaginationHistory,
           confAppHist,
           doneAppHist,

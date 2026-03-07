@@ -4,18 +4,19 @@ import useModal from "@/store/useModal";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { formDataKeysAndValues } from "@/utils/index";
-import { createApiSchedule, deleteApiSchedule, getApiSchedules } from "@/services/schedulesDoctor.service";
+import { createApiSchedule, deleteApiSchedule, getApiSchedules, updateApiSchedule } from "@/services/schedulesDoctor.service";
 import type { ISchedule } from "@/types/index";
 
 const useDoctorSchedule = ({ fetchData = false, idDoctor, clinicId }: { fetchData: boolean, own?: boolean, idDoctor: number, clinicId: number }) => {
     const { contextHolder, showNotification } = useNotification()
     const [schedules, setSchedules] = useState<ISchedule[]>([])
-    const { close } = useModal();
+    const { close, open } = useModal();
     const [times, setTimes] = useState<{ startTime: string, endTime: string, weekdays: number[] }>({
         weekdays: [],
         startTime: "",
         endTime: ""
     });
+    const [scheduleEdit, setScheduleEdit] = useState<ISchedule | null>(null)
 
     const getSchedules = async () => {
         const response = await getApiSchedules(clinicId, idDoctor);
@@ -30,7 +31,8 @@ const useDoctorSchedule = ({ fetchData = false, idDoctor, clinicId }: { fetchDat
     const saveSchedule = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = formDataKeysAndValues(e);
-        const response = await createApiSchedule({ data: { ...data, ...times, doctorId: idDoctor }, errorfun: showNotification }, clinicId, idDoctor)
+        const response = scheduleEdit ? await updateApiSchedule({ data: { startTime: times.startTime, endTime: times.endTime }, errorfun: showNotification, id: scheduleEdit.id }, clinicId, idDoctor)
+            : await createApiSchedule({ data: { ...data, ...times, doctorId: idDoctor }, errorfun: showNotification }, clinicId, idDoctor)
         if (response && response.status) {
             showNotification({ type: "success", content: `Horario agregado correctamente` });
             close("schedule");
@@ -82,6 +84,12 @@ const useDoctorSchedule = ({ fetchData = false, idDoctor, clinicId }: { fetchDat
         }
     }
 
+    const handleEdit = (schedule: ISchedule) => {
+        setScheduleEdit(schedule)
+        setTimes({ ...times, startTime: schedule.startTime, endTime: schedule.endTime })
+        open("schedule")
+    }
+
 
     return {
         contextHolder,
@@ -92,7 +100,10 @@ const useDoctorSchedule = ({ fetchData = false, idDoctor, clinicId }: { fetchDat
         deleteSchedule,
         setTimes,
         times,
-        AddDays
+        AddDays,
+        handleEdit,
+        scheduleEdit,
+        setScheduleEdit,
     }
 
 }

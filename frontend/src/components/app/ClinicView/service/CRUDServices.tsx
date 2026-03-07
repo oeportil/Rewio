@@ -17,6 +17,7 @@ const CRUDServices = ({ clinicId }: { clinicId: number }) => {
     delService,
     pag,
     handlePagination,
+    pagination
   } = useService(clinicId);
 
   return (
@@ -76,8 +77,8 @@ const CRUDServices = ({ clinicId }: { clinicId: number }) => {
           </div>
         ))}
         <PaginationData
-          current={pag.page}
-          total={pag.total!}
+          current={pagination.page}
+          total={pagination.total!}
           pag={pag}
           onshowsizechange={handlePagination}
         />

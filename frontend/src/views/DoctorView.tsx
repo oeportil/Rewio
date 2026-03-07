@@ -27,7 +27,7 @@ const DoctorView = () => {
     clinicId: clinicId ? +clinicId : 0,
   });
 
-  const { values, pag, handlePagination, confirmAppointment, doneAppointment } =
+  const { values, pag, handlePagination, confirmAppointment, doneAppointment, pagination } =
     useAppointment({
       type: "doctor",
       id: clinicId ? +clinicId : 0,
@@ -90,6 +90,7 @@ const DoctorView = () => {
             values as IClinicAppointment[],
             false,
             pag,
+            pagination,
             handlePagination,
             confirmAppointment,
             doneAppointment,

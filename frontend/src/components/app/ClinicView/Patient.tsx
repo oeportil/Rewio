@@ -23,9 +23,8 @@ const Patient = ({ clinic }: Props) => {
   const {
     updateAppointment: store,
     appointment,
-    appointments,
   } = useStoreAppointment();
-  const { cancellAppointment, pag, handlePagination, values } = useAppointment({
+  const { cancellAppointment, pag, pagination, handlePagination, values, saveAppointment, contextHolder } = useAppointment({
     type: "patient",
   });
 
@@ -40,6 +39,7 @@ const Patient = ({ clinic }: Props) => {
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-10 space-y-10">
       {/* HEADER */}
+      {contextHolder}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -61,10 +61,12 @@ const Patient = ({ clinic }: Props) => {
 
       {/* CITAS */}
       <Appointments
-        appointments={appointments.length != 0 ? appointments : values}
+        appointments={values}
         cancellAppointment={cancellAppointment}
         pag={pag}
+        pagination={pagination}
         handlePagination={handlePagination}
+        saveAppointment={saveAppointment}
       />
 
       {/* SERVICIOS */}
@@ -140,6 +142,7 @@ const Patient = ({ clinic }: Props) => {
           <AvailableSchedules
             idDoctor={appointment.doctorId}
             idService={appointment.serviceId}
+            saveAppointment={saveAppointment}
           />
         )}
     </div>

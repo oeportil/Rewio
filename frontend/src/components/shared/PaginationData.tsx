@@ -10,13 +10,14 @@ type TProp = {
 
 const PaginationData = ({ current, total, onshowsizechange, pag }: TProp) => {
   const changePage = (page: number, pageSize: number) => {
-    onshowsizechange({ ...pag, page: page, limit: pageSize });
+    onshowsizechange({ ...pag, page, limit: pageSize });
   };
+
   return (
     <Pagination
       showSizeChanger
-      // onShowSizeChange={(_, size) => handler(size)}
-      defaultCurrent={current}
+      current={current}
+      pageSize={pag.limit}
       total={total}
       onChange={changePage}
       className="flex justify-center"

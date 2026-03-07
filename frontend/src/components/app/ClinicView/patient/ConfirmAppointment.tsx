@@ -1,17 +1,13 @@
 import Dialog from "@/components/shared/Dialog";
-import { useAppointment } from "@/hooks/Module/useAppointment";
 import { useStoreAppointment } from "@/store/useStoreAppointment";
 import { calculateEndTime } from "@/utils/index";
 
-const ConfirmAppointment = () => {
+const ConfirmAppointment = ({saveAppointment}: {saveAppointment: () => void}) => {
   const { appointment } = useStoreAppointment();
-  const { saveAppointment, contextHolder } = useAppointment({
-    type: "patient",
-  });
+
   return (
     <Dialog id="confirmAppointment" buttonContent="Confirmar Cita">
-      {contextHolder}
-      <div className="space-y-6 min-w-[320px]">
+          <div className="space-y-6 min-w-[320px]">
         <div>
           <h2 className="text-xl font-bold text-slate-900">Confirmar Cita</h2>
           <p className="text-sm text-slate-500">

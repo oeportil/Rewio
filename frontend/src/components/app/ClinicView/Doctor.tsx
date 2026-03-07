@@ -30,6 +30,7 @@ const Doctor = ({ clinic }: Props) => {
     handlePagination,
     confirmAppointment,
     doneAppointment,
+    pagination
   } = useAppointment({
     type: "doctor",
     id: clinic?.id,
@@ -49,6 +50,7 @@ const Doctor = ({ clinic }: Props) => {
     confirmAppointment: confAppHist,
     contextHolder: contextHolderHistory,
     doneAppointment: doneAppHist,
+    pagination: paginationHistory
   } = useAppointment({
     type: "doctor",
     id: clinic?.id,
@@ -154,6 +156,7 @@ const Doctor = ({ clinic }: Props) => {
             values as IClinicAppointment[],
             true,
             pag,
+            pagination,
             handlePagination,
             confirmAppointment,
             doneAppointment,
@@ -183,6 +186,7 @@ const Doctor = ({ clinic }: Props) => {
           historyValues as IClinicAppointment[],
           false,
           pagHistory,
+          paginationHistory,
           handlePaginationHistory,
           confAppHist,
           doneAppHist,
